@@ -4,13 +4,16 @@ import com.contextos.exception.ResourceNotFoundException;
 import com.contextos.model.*;
 import com.contextos.repository.MeetingParticipantRepository;
 import com.contextos.repository.MeetingRepository;
+import com.contextos.repository.UserRepository;
+import com.contextos.security.UserDetailsImpl;
 import com.contextos.service.VideoSessionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.OffsetDateTime;
@@ -29,6 +32,7 @@ public class VideoRoomController {
     private final MeetingParticipantRepository participantRepository;
     private final VideoSessionService sessionService;
     private final SimpMessagingTemplate messagingTemplate;
+    private final UserRepository userRepository;
 
     @Value("${coturn.secret:contextos_turn_secret}")
     private String turnSecret;
@@ -39,9 +43,20 @@ public class VideoRoomController {
     @Value("${coturn.urls:turn:localhost:3478}")
     private String turnUrls;
 
+    private User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !(authentication.getPrincipal() instanceof UserDetailsImpl)) {
+            throw new ResourceNotFoundException("Authenticated user not found");
+        }
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        return userRepository.findById(userDetails.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + userDetails.getId()));
+    }
+
     @PostMapping("/code/{code}/join-token")
-    public ResponseEntity<?> getJoinToken(@PathVariable String code, @AuthenticationPrincipal User user) {
-        log.info("Requesting join token for meeting code {}", code);
+    public ResponseEntity<?> getJoinToken(@PathVariable String code) {
+        User user = getCurrentUser();
+        log.info("Requesting join token for meeting code {} by user {}", code, user.getEmail());
         Meeting meeting = meetingRepository.findByMeetingCode(code).orElseThrow(() -> new ResourceNotFoundException("Meeting not found"));
 
         boolean isHost = meeting.getHost().getId().equals(user.getId());
@@ -97,7 +112,8 @@ public class VideoRoomController {
     }
 
     @PostMapping("/{id}/end")
-    public ResponseEntity<?> endMeeting(@PathVariable UUID id, @AuthenticationPrincipal User user) {
+    public ResponseEntity<?> endMeeting(@PathVariable UUID id) {
+        User user = getCurrentUser();
         Meeting meeting = meetingRepository.findById(id).orElseThrow();
         if (!meeting.getHost().getId().equals(user.getId())) {
             return ResponseEntity.status(403).build();

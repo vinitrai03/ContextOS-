@@ -1,16 +1,20 @@
 package com.contextos.controller;
 
+import com.contextos.exception.ResourceNotFoundException;
 import com.contextos.model.*;
 import com.contextos.repository.*;
+import com.contextos.security.UserDetailsImpl;
 import com.contextos.service.email.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -24,19 +28,52 @@ public class EmailController {
     private final EmailRecipientRepository emailRecipientRepository;
     private final EmailSettingsRepository emailSettingsRepository;
     private final EmailService emailService;
+    private final UserRepository userRepository;
+
+    private User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !(authentication.getPrincipal() instanceof UserDetailsImpl)) {
+            throw new ResourceNotFoundException("Authenticated user not found");
+        }
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        return userRepository.findById(userDetails.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + userDetails.getId()));
+    }
 
     @GetMapping
     public ResponseEntity<Page<MailboxItem>> getEmails(
-            @AuthenticationPrincipal User user,
             @RequestParam(required = false, defaultValue = "INBOX") FolderType folder,
             Pageable pageable) {
+        User user = getCurrentUser();
         Page<MailboxItem> items = mailboxItemRepository.findByUserIdAndFolderOrderByCreatedAtDesc(user.getId(), folder, pageable);
         return ResponseEntity.ok(items);
     }
 
+    @GetMapping("/approvals")
+    public ResponseEntity<List<Email>> getPendingApprovals() {
+        return ResponseEntity.ok(emailRepository.findByStatus(EmailStatus.PENDING_APPROVAL));
+    }
+
+    @PostMapping("/{id}/approve")
+    public ResponseEntity<?> approveEmail(@PathVariable UUID id) {
+        Email email = emailRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Email not found"));
+        email.setStatus(EmailStatus.QUEUED);
+        emailRepository.save(email);
+        emailService.dispatchEmail(email);
+        return ResponseEntity.ok(Map.of("message", "Email approved and dispatched", "id", id));
+    }
+
+    @PostMapping("/{id}/reject")
+    public ResponseEntity<?> rejectEmail(@PathVariable UUID id) {
+        Email email = emailRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Email not found"));
+        email.setStatus(EmailStatus.DRAFT);
+        emailRepository.save(email);
+        return ResponseEntity.ok(Map.of("message", "Email rejected and reverted to draft", "id", id));
+    }
+
     @PostMapping
-    public ResponseEntity<Email> sendEmail(@AuthenticationPrincipal User user, @RequestBody Email requestEmail) {
-        // Simple draft to send implementation
+    public ResponseEntity<Email> sendEmail(@RequestBody Email requestEmail) {
+        User user = getCurrentUser();
         requestEmail.setSender(user);
         requestEmail.setSenderEmail(user.getEmail());
         emailRepository.save(requestEmail);
@@ -47,9 +84,9 @@ public class EmailController {
 
     @PatchMapping("/{id}")
     public ResponseEntity<MailboxItem> updateMailboxItem(
-            @AuthenticationPrincipal User user,
             @PathVariable UUID id,
             @RequestBody Map<String, Object> updates) {
+        User user = getCurrentUser();
         MailboxItem item = mailboxItemRepository.findById(id).orElseThrow();
         if (!item.getUser().getId().equals(user.getId())) {
             return ResponseEntity.status(403).build();
@@ -71,7 +108,6 @@ public class EmailController {
     // Webhook for delivery status updates (provider agnostic)
     @PostMapping("/webhooks/delivery")
     public ResponseEntity<Void> handleDeliveryWebhook(@RequestBody Map<String, Object> payload) {
-        // e.g. payload contains { "emailAddress": "...", "status": "BOUNCED", "messageId": "..." }
         String emailAddress = (String) payload.get("emailAddress");
         String statusStr = (String) payload.get("status");
         String messageId = (String) payload.get("messageId");

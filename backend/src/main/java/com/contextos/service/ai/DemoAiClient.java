@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.UUID;
 
 @Service
-@Profile("dev | test")
 @RequiredArgsConstructor
 @Slf4j
 public class DemoAiClient implements AiClient {

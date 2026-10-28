@@ -12,6 +12,7 @@ public interface TaskRepository extends JpaRepository<Task, UUID> {
     List<Task> findByMeetingIdOrderByPositionAsc(UUID meetingId);
     List<Task> findByAssigneeIdOrderByPositionAsc(UUID assigneeId);
     List<Task> findByStatusOrderByPositionAsc(String status);
+    long countByStatusNot(String status);
     
     @Query("SELECT MAX(t.position) FROM Task t WHERE t.status = :status")
     Double findMaxPositionByStatus(@Param("status") String status);

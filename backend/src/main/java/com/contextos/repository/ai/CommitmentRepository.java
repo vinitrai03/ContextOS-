@@ -9,4 +9,5 @@ public interface CommitmentRepository extends JpaRepository<Commitment, UUID> {
     List<Commitment> findByMeetingId(UUID meetingId);
     List<Commitment> findByPersonId(UUID personId);
     List<Commitment> findByStatus(String status);
+    long countByStatus(String status);
 }

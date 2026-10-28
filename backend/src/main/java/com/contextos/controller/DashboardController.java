@@ -7,6 +7,9 @@ import com.contextos.model.User;
 import com.contextos.repository.AuditLogRepository;
 import com.contextos.repository.MeetingRepository;
 import com.contextos.repository.UserRepository;
+import com.contextos.repository.ai.CommitmentRepository;
+import com.contextos.repository.ai.DecisionRepository;
+import com.contextos.repository.ai.TaskRepository;
 import com.contextos.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -28,6 +31,9 @@ public class DashboardController {
     private final MeetingRepository meetingRepository;
     private final AuditLogRepository auditLogRepository;
     private final UserRepository userRepository;
+    private final TaskRepository taskRepository;
+    private final CommitmentRepository commitmentRepository;
+    private final DecisionRepository decisionRepository;
 
     private User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -49,14 +55,18 @@ public class DashboardController {
         List<AuditLog> recentActivity = auditLogRepository.findAllByOrderByCreatedAtDesc(PageRequest.of(0, 10)).getContent();
         List<Meeting> todayAgenda = meetingRepository.findTodayAgenda(user, startOfDay, endOfDay);
 
+        long pendingTasks = taskRepository.countByStatusNot("DONE");
+        long pendingCommitments = commitmentRepository.countByStatus("PENDING");
+        long totalDecisions = decisionRepository.count();
+
         DashboardSummaryResponse response = DashboardSummaryResponse.builder()
                 .upcomingMeetings(upcoming)
                 .todayMeetings(today)
                 .completedMeetings(completed)
-                .cancelledMeetings(0) // Simplification for now
-                .pendingTasks(0)
-                .pendingCommitments(0)
-                .recentDecisions(0)
+                .cancelledMeetings(0)
+                .pendingTasks((int) pendingTasks)
+                .pendingCommitments((int) pendingCommitments)
+                .recentDecisions((int) totalDecisions)
                 .recentActivity(recentActivity)
                 .todayAgenda(todayAgenda)
                 .build();
