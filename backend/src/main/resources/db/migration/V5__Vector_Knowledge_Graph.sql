@@ -13,3 +13,4 @@ CREATE TABLE IF NOT EXISTS context_embeddings (
 );
 
 CREATE INDEX IF NOT EXISTS idx_context_embeddings_entity ON context_embeddings(entity_type, entity_id);
+

@@ -4,7 +4,7 @@ import { GlassCard } from '../components/ui/GlassCard';
 import { Tabs } from '../components/ui/Tabs';
 import { Mail, Clock, CheckCircle2, FileText, Video } from 'lucide-react';
 import { Badge } from '../components/ui/Badge';
-import { Button } from '../components/ui/Button';
+import { Button } from '../components/ui/button';
 import apiClient from '../services/apiClient';
 
 export const MeetingDetailsPage: React.FC = () => {

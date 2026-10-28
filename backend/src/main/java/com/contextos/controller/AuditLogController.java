@@ -22,3 +22,4 @@ public class AuditLogController {
         return ResponseEntity.ok(auditLogRepository.findAllByOrderByCreatedAtDesc(pageable));
     }
 }
+

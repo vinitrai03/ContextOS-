@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import apiClient from '../../services/apiClient';
 import { useAuthStore } from '../../store/useAuthStore';
 import { Video, Mic, MicOff, VideoOff, Settings, AlertCircle, PhoneOff } from 'lucide-react';
-import { Button } from '../../components/ui/Button';
+import { Button } from '../../components/ui/button';
 
 interface JoinTokenResponse {
   token: string;

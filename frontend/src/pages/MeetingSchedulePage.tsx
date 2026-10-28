@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GlassCard } from '../components/ui/GlassCard';
-import { Input } from '../components/ui/Input';
-import { Button } from '../components/ui/Button';
+import { Input } from '../components/ui/input';
+import { Button } from '../components/ui/button';
 import { Video, Calendar, Clock, AlignLeft, Users, Shield, ArrowRight, Sparkles, Send } from 'lucide-react';
 import { Badge } from '../components/ui/Badge';
 import apiClient from '../services/apiClient';

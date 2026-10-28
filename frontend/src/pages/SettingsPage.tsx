@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { GlassCard } from '../components/ui/GlassCard';
-import { Input } from '../components/ui/Input';
-import { Button } from '../components/ui/Button';
+import { Input } from '../components/ui/input';
+import { Button } from '../components/ui/button';
 import { User as UserIcon, Mail, Shield, Save, Key } from 'lucide-react';
 import { useAuthStore } from '../store/useAuthStore';
 

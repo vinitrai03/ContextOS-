@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { GlassCard } from '../../components/ui/GlassCard';
-import { Button } from '../../components/ui/Button';
+import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/Badge';
 import { CheckCircle, XCircle, Send, Clock, User, FileText } from 'lucide-react';
 import apiClient from '../../services/apiClient';

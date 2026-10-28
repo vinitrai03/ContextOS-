@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import apiClient from '../services/apiClient';
 import { GlassCard } from '../components/ui/GlassCard';
 import { Badge } from '../components/ui/Badge';
-import { Button } from '../components/ui/Button';
+import { Button } from '../components/ui/button';
 import { Video, Calendar as CalendarIcon, Clock, Users, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 

@@ -5,7 +5,7 @@ import {
   Sparkles, Video, Mail, CheckSquare, GitFork, Cpu, ShieldCheck, 
   ArrowRight, Play, CheckCircle2, Zap, Database, Lock 
 } from 'lucide-react';
-import { Button } from '../components/ui/Button';
+import { Button } from '../components/ui/button';
 import { GlassCard } from '../components/ui/GlassCard';
 import { Badge } from '../components/ui/Badge';
 

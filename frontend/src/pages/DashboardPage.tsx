@@ -1,7 +1,7 @@
 import React from 'react';
 import { GlassCard } from '../components/ui/GlassCard';
 import { Badge } from '../components/ui/Badge';
-import { Button } from '../components/ui/Button';
+import { Button } from '../components/ui/button';
 import { Video, Mail, CheckSquare, GitFork, Sparkles, Calendar, ArrowUpRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useDashboardSummary } from '../hooks/useDashboard';

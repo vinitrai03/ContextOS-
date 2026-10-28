@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { GlassCard } from '../../components/ui/GlassCard';
-import { Button } from '../../components/ui/Button';
+import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/Badge';
 import { Mail, Send, Inbox, Star, Trash2, Edit3, MoreVertical, Search, CheckCircle2, AlertCircle } from 'lucide-react';
 import { useAuthStore } from '../../store/useAuthStore';

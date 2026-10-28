@@ -78,3 +78,4 @@ public class NotificationController {
         return ResponseEntity.ok(Map.of("message", "All notifications marked as read"));
     }
 }
+

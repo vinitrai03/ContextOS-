@@ -109,3 +109,4 @@ public class OpenAiClient implements AiClient {
         throw new RuntimeException("Empty response from OpenAI API");
     }
 }
+
