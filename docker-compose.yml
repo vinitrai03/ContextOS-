@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: contextos-db
+    environment:
+      POSTGRES_DB: contextos
+      POSTGRES_USER: contextos
+      POSTGRES_PASSWORD: contextos_secret_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U contextos -d contextos"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: contextos-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  coturn:
+    image: coturn/coturn
+    container_name: contextos-coturn
+    network_mode: "host"
+    environment:
+      - TURN_SECRET=contextos_turn_secret
+      - TURN_REALM=contextos.local
+    command: ["-c", "", "--use-auth-secret", "--static-auth-secret=contextos_turn_secret", "--realm=contextos.local", "--listening-port=3478", "--min-port=49152", "--max-port=65535"]
+
+volumes:
+  postgres_data:
