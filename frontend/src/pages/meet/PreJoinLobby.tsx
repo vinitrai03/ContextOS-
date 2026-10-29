@@ -142,7 +142,7 @@ export default function PreJoinLobby() {
                 />
             ) : (
                 <div className="w-24 h-24 rounded-full bg-surface-hover flex items-center justify-center text-3xl text-text-primary font-bold uppercase">
-                    {user?.name.charAt(0)}
+                    {user?.name?.charAt(0) || 'U'}
                 </div>
             )}
 
@@ -175,7 +175,7 @@ export default function PreJoinLobby() {
                     Join Meeting
                 </Button>
                 <p className="text-center text-sm text-text-muted">
-                    Joining as {user?.name}
+                    Joining as {user?.name || 'Guest User'}
                 </p>
             </div>
         </div>

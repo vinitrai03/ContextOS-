@@ -14,7 +14,7 @@ interface AuthState {
   setAuth: (user: User, token: string, refreshToken: string) => void;
 }
 
-const DEFAULT_DEMO_USER: User = {
+export const DEFAULT_DEMO_USER: User = {
   id: 'usr_admin_01',
   name: 'Admin User',
   email: 'admin@contextos.local',
@@ -31,7 +31,7 @@ const getStoredUser = () => {
 };
 
 export const useAuthStore = create<AuthState>((set) => ({
-  user: getStoredUser(),
+  user: getStoredUser() || DEFAULT_DEMO_USER,
   isAuthenticated: !!getStoredToken(),
   token: getStoredToken(),
   refreshToken: getStoredRefreshToken(),

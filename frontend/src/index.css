@@ -13,6 +13,9 @@
   --text-primary: #0f172a;
   --text-secondary: #475569;
   --text-muted: #94a3b8;
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --skeleton: #6366f1;
 }
 
 .dark {
@@ -26,6 +29,9 @@
   --text-primary: #f8fafc;
   --text-secondary: #94a3b8;
   --text-muted: #64748b;
+  --background: #090d16;
+  --foreground: #f8fafc;
+  --skeleton: #6366f1;
 }
 
 body {
