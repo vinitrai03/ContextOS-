@@ -297,13 +297,40 @@ type TechnologyOrbitDisplayProps = {
 
 const TechOrbitDisplay = memo(function TechOrbitDisplay({
   iconsArray,
-  text = 'Animated Login',
+  text = 'ContextOS',
 }: TechnologyOrbitDisplayProps) {
   return (
-    <section className='relative flex h-full w-full flex-col items-center justify-center overflow-hidden rounded-lg'>
-      <span className='pointer-events-none whitespace-pre-wrap bg-gradient-to-b from-black to-gray-300/80 bg-clip-text text-center text-7xl font-semibold leading-none text-transparent dark:from-white dark:to-slate-900/10'>
-        {text}
-      </span>
+    <section className='relative flex h-full w-full flex-col items-center justify-center overflow-hidden rounded-lg select-none'>
+      {/* Central Brand Showcase */}
+      <div className="relative flex flex-col items-center justify-center pointer-events-none z-10">
+        {/* Ambient Multi-Layer Glow Aura */}
+        <div className="absolute -inset-16 bg-gradient-to-r from-indigo-500/30 via-purple-500/25 to-cyan-400/30 blur-3xl rounded-full -z-10 animate-pulse-slow" />
+        <div className="absolute -inset-6 bg-indigo-500/20 blur-xl rounded-full -z-10" />
+
+        {/* Futuristic Status Pill */}
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-surface/80 border border-indigo-500/30 backdrop-blur-md shadow-lg shadow-indigo-500/10 mb-3">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500 shadow-[0_0_8px_#06b6d4]"></span>
+          </span>
+          <span className="text-[11px] font-mono tracking-widest uppercase font-bold bg-gradient-to-r from-indigo-300 via-white to-cyan-300 bg-clip-text text-transparent">
+            UNIFIED CONTEXT ENGINE
+          </span>
+        </div>
+
+        {/* Enhanced ContextOS Typography */}
+        <h1 className="text-6xl md:text-7xl lg:text-8xl font-black tracking-tight leading-none text-center">
+          <span className="text-white drop-shadow-[0_2px_16px_rgba(255,255,255,0.35)]">Context</span>
+          <span className="bg-gradient-to-tr from-brand-DEFAULT via-brand-accent to-brand-cyan bg-clip-text text-transparent drop-shadow-[0_4px_30px_rgba(99,102,241,0.8)] ml-0.5">
+            OS
+          </span>
+        </h1>
+
+        {/* Subtitle */}
+        <p className="mt-3 text-xs md:text-sm font-medium tracking-wide text-text-secondary/90 max-w-xs text-center drop-shadow-sm">
+          Autonomous Meeting & Organizational Intelligence
+        </p>
+      </div>
 
       {iconsArray.map((icon, index) => (
         <OrbitingCircles
@@ -628,94 +655,168 @@ const Label = memo(function Label({ className, ...props }: LabelProps) {
 
 // ==================== Meeting Platform Logos ====================
 
-// Brand logos from the Simple Icons CDN.
-const logo = (slug: string, alt: string) => () => (
-  <Image
-    width={40}
-    height={40}
-    src={`https://cdn.simpleicons.org/${slug}`}
-    alt={alt}
-    className="size-7 object-contain"
-  />
+const wrapLogoBadge = (children: React.ReactNode, name: string) => () => (
+  <div
+    className="size-11 rounded-full bg-surface/90 border border-white/20 backdrop-blur-xl shadow-xl shadow-black/50 flex items-center justify-center p-2 hover:scale-125 hover:border-brand-DEFAULT/60 transition-all duration-300 group cursor-pointer"
+    title={name}
+  >
+    {children}
+  </div>
+);
+
+// High-fidelity self-contained vector brand logos (0 network latency, 0 broken images)
+const GoogleMeetIcon = () => (
+  <svg viewBox="0 0 48 48" className="w-5 h-5">
+    <rect width="20" height="24" x="4" y="12" rx="4" fill="#00832d" />
+    <path fill="#006622" d="M24 16v16l14 8V8l-14 8z" />
+    <path fill="#26a69a" d="M4 16c0-2.2 1.8-4 4-4h16v24H8c-2.2 0-4-1.8-4-4V16z" />
+    <path fill="#00ac47" d="M24 12h-8c-2.2 0-4 1.8-4 4v16c0 2.2 1.8 4 4 4h8V12z" />
+    <path fill="#ea4335" d="M38 8.5L24 18v12l14 9.5V8.5z" />
+    <path fill="#ffba00" d="M38 39.5l-14-9.5v6l10 6.5 4-3z" />
+  </svg>
+);
+
+const ZoomIcon = () => (
+  <svg viewBox="0 0 48 48" className="w-5 h-5">
+    <circle cx="24" cy="24" r="22" fill="#2D8CFF" />
+    <rect x="11" y="16" width="16" height="16" rx="3" fill="#ffffff" />
+    <polygon points="29,20 37,15 37,33 29,28" fill="#ffffff" />
+  </svg>
+);
+
+const TeamsIcon = () => (
+  <svg viewBox="0 0 48 48" className="w-5 h-5">
+    <circle cx="24" cy="24" r="22" fill="#505AC9" />
+    <rect x="12" y="14" width="16" height="20" rx="3" fill="#7B83EB" />
+    <path d="M20 20h-4v-2h10v2h-4v10h-2V20z" fill="#ffffff" />
+    <circle cx="34" cy="18" r="4" fill="#C5CBFA" />
+    <path d="M28 26c0-2.2 2.7-4 6-4s6 1.8 6 4v4h-12v-4z" fill="#9CA6F8" />
+  </svg>
+);
+
+const SkypeIcon = () => (
+  <svg viewBox="0 0 48 48" className="w-5 h-5">
+    <circle cx="24" cy="24" r="22" fill="#00AFF0" />
+    <path d="M28.5 28.2c-.7.5-1.8.8-3.1.8-1.5 0-2.7-.4-3.5-1.1-.9-.8-1.3-1.8-1.3-3.1 0-.9.3-1.7.9-2.2.6-.5 1.5-.9 2.7-1.2l2.3-.5c1.4-.3 2.1-.9 2.1-1.7 0-.7-.3-1.3-.9-1.7-.6-.4-1.5-.6-2.5-.6-1.1 0-2 .2-2.7.7-.7.5-1 1.1-1 2h-2.8c0-1.4.6-2.5 1.7-3.3 1.1-.8 2.7-1.3 4.7-1.3 1.9 0 3.4.4 4.5 1.2 1.1.8 1.6 1.9 1.6 3.3 0 1-.3 1.8-.9 2.4-.6.6-1.5 1-2.7 1.3l-2.2.5c-1.4.3-2.1.9-2.1 1.7 0 .7.3 1.3 1 1.7.7.4 1.7.6 2.8.6 1.2 0 2.2-.3 3-.8.8-.6 1.2-1.3 1.2-2.3h2.8c0 1.5-.6 2.7-1.7 3.5z" fill="#ffffff" />
+  </svg>
+);
+
+const WebexIcon = () => (
+  <svg viewBox="0 0 48 48" className="w-5 h-5">
+    <circle cx="24" cy="24" r="22" fill="#0D2738" />
+    <path d="M16 28c0-4.4 3.6-8 8-8s8 3.6 8 8" stroke="#00BC87" strokeWidth="3" strokeLinecap="round" fill="none" />
+    <circle cx="24" cy="28" r="4" fill="#00BC87" />
+    <circle cx="15" cy="22" r="3" fill="#00D799" />
+    <circle cx="33" cy="22" r="3" fill="#00A373" />
+  </svg>
+);
+
+const JitsiIcon = () => (
+  <svg viewBox="0 0 48 48" className="w-5 h-5">
+    <circle cx="24" cy="24" r="22" fill="#17A0DB" />
+    <path d="M24 12c-5.5 0-10 4.5-10 10v6c0 4.4 3.6 8 8 8h4c4.4 0 8-3.6 8-8v-6c0-5.5-4.5-10-10-10zm-3 12c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6 0c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z" fill="#ffffff" />
+  </svg>
+);
+
+const SlackIcon = () => (
+  <svg viewBox="0 0 48 48" className="w-5 h-5">
+    <circle cx="24" cy="24" r="22" fill="#1E1035" />
+    <g transform="translate(13, 13) scale(0.95)">
+      <path d="M6 10a2 2 0 11-2-2h2v2zm1 0a2 2 0 114 0v5a2 2 0 11-4 0v-5z" fill="#36C5F0" />
+      <path d="M14 6a2 2 0 112-2v2h-2zm0 1a2 2 0 110 4H9a2 2 0 110-4h5z" fill="#2EB67D" />
+      <path d="M18 14a2 2 0 112 2h-2v-2zm-1 0a2 2 0 11-4 0V9a2 2 0 114 0v5z" fill="#E01E5A" />
+      <path d="M10 18a2 2 0 11-2 2v-2h2zm0-1a2 2 0 110-4h5a2 2 0 110 4h-5z" fill="#ECB22E" />
+    </g>
+  </svg>
+);
+
+const ZohoIcon = () => (
+  <svg viewBox="0 0 48 48" className="w-5 h-5">
+    <circle cx="24" cy="24" r="22" fill="#1C2833" />
+    <rect x="14" y="14" width="9" height="9" rx="2" fill="#E42528" />
+    <rect x="25" y="14" width="9" height="9" rx="2" fill="#229954" />
+    <rect x="14" y="25" width="9" height="9" rx="2" fill="#2980B9" />
+    <rect x="25" y="25" width="9" height="9" rx="2" fill="#F39C12" />
+  </svg>
 );
 
 const iconsArray: IconConfig[] = [
   // Inner orbit
   {
-    component: logo('googlemeet', 'Google Meet'),
-    className: 'size-[30px] border-none bg-transparent',
-    duration: 20,
+    component: wrapLogoBadge(<GoogleMeetIcon />, 'Google Meet'),
+    className: 'size-[44px] border-none bg-transparent',
+    duration: 22,
     delay: 20,
-    radius: 100,
+    radius: 110,
     path: false,
     reverse: false,
   },
   {
-    component: logo('zoom', 'Zoom'),
-    className: 'size-[30px] border-none bg-transparent',
-    duration: 20,
-    delay: 10,
-    radius: 100,
+    component: wrapLogoBadge(<ZoomIcon />, 'Zoom'),
+    className: 'size-[44px] border-none bg-transparent',
+    duration: 22,
+    delay: 9,
+    radius: 110,
     path: false,
     reverse: false,
   },
 
   // Second orbit (reverse)
   {
-    component: logo('microsoftteams', 'Microsoft Teams'),
-    className: 'size-[30px] border-none bg-transparent',
-    duration: 20,
-    delay: 20,
-    radius: 150,
+    component: wrapLogoBadge(<TeamsIcon />, 'Microsoft Teams'),
+    className: 'size-[44px] border-none bg-transparent',
+    duration: 26,
+    delay: 18,
+    radius: 170,
     path: false,
     reverse: true,
   },
   {
-    component: logo('skype', 'Skype'),
-    className: 'size-[30px] border-none bg-transparent',
-    duration: 20,
-    delay: 10,
-    radius: 150,
+    component: wrapLogoBadge(<SkypeIcon />, 'Skype'),
+    className: 'size-[44px] border-none bg-transparent',
+    duration: 26,
+    delay: 5,
+    radius: 170,
     path: false,
     reverse: true,
   },
 
   // Third orbit
   {
-    component: logo('cisco', 'Cisco Webex'),
-    className: 'size-[50px] border-none bg-transparent',
-    duration: 20,
-    delay: 20,
-    radius: 210,
+    component: wrapLogoBadge(<WebexIcon />, 'Cisco Webex'),
+    className: 'size-[44px] border-none bg-transparent',
+    duration: 30,
+    delay: 24,
+    radius: 230,
     path: false,
     reverse: false,
   },
   {
-    component: logo('jitsi', 'Jitsi Meet'),
-    className: 'size-[50px] border-none bg-transparent',
-    duration: 20,
-    delay: 10,
-    radius: 210,
+    component: wrapLogoBadge(<JitsiIcon />, 'Jitsi Meet'),
+    className: 'size-[44px] border-none bg-transparent',
+    duration: 30,
+    delay: 9,
+    radius: 230,
     path: false,
     reverse: false,
   },
 
   // Outer orbit (reverse)
   {
-    component: logo('slack', 'Slack'),
-    className: 'size-[50px] border-none bg-transparent',
-    duration: 20,
-    delay: 20,
-    radius: 270,
+    component: wrapLogoBadge(<SlackIcon />, 'Slack'),
+    className: 'size-[44px] border-none bg-transparent',
+    duration: 34,
+    delay: 22,
+    radius: 290,
     path: false,
     reverse: true,
   },
   {
-    component: logo('zoho', 'Zoho Meeting'),
-    className: 'size-[50px] border-none bg-transparent',
-    duration: 20,
-    delay: 10,
-    radius: 270,
+    component: wrapLogoBadge(<ZohoIcon />, 'Zoho Meeting'),
+    className: 'size-[44px] border-none bg-transparent',
+    duration: 34,
+    delay: 5,
+    radius: 290,
     path: false,
     reverse: true,
   },
@@ -818,4 +919,5 @@ export {
   AuthTabs,
   Label,
   BottomGradient,
+  iconsArray,
 };

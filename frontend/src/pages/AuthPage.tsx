@@ -9,102 +9,10 @@ import {
   AnimatedForm,
   BoxReveal,
   BottomGradient,
+  iconsArray,
 } from '../components/ui/auth-page';
 import { Button } from '../components/ui/button';
 import { Sparkles, Shield, UserCheck, ArrowLeft } from 'lucide-react';
-
-const logo = (slug: string, alt: string) => () => (
-  <img
-    width={40}
-    height={40}
-    src={`https://cdn.simpleicons.org/${slug}`}
-    alt={alt}
-    className="size-7 object-contain drop-shadow"
-    loading="lazy"
-  />
-);
-
-const iconsArray = [
-  // Inner orbit
-  {
-    component: logo('googlemeet', 'Google Meet'),
-    className: 'size-[30px] border-none bg-transparent',
-    duration: 20,
-    delay: 20,
-    radius: 100,
-    path: false,
-    reverse: false,
-  },
-  {
-    component: logo('zoom', 'Zoom'),
-    className: 'size-[30px] border-none bg-transparent',
-    duration: 20,
-    delay: 10,
-    radius: 100,
-    path: false,
-    reverse: false,
-  },
-
-  // Second orbit (reverse)
-  {
-    component: logo('microsoftteams', 'Microsoft Teams'),
-    className: 'size-[30px] border-none bg-transparent',
-    duration: 20,
-    delay: 20,
-    radius: 150,
-    path: false,
-    reverse: true,
-  },
-  {
-    component: logo('skype', 'Skype'),
-    className: 'size-[30px] border-none bg-transparent',
-    duration: 20,
-    delay: 10,
-    radius: 150,
-    path: false,
-    reverse: true,
-  },
-
-  // Third orbit
-  {
-    component: logo('cisco', 'Cisco Webex'),
-    className: 'size-[50px] border-none bg-transparent',
-    duration: 20,
-    delay: 20,
-    radius: 210,
-    path: false,
-    reverse: false,
-  },
-  {
-    component: logo('jitsi', 'Jitsi Meet'),
-    className: 'size-[50px] border-none bg-transparent',
-    duration: 20,
-    delay: 10,
-    radius: 210,
-    path: false,
-    reverse: false,
-  },
-
-  // Outer orbit (reverse)
-  {
-    component: logo('slack', 'Slack'),
-    className: 'size-[50px] border-none bg-transparent',
-    duration: 20,
-    delay: 20,
-    radius: 270,
-    path: false,
-    reverse: true,
-  },
-  {
-    component: logo('zoho', 'Zoho Meeting'),
-    className: 'size-[50px] border-none bg-transparent',
-    duration: 20,
-    delay: 10,
-    radius: 270,
-    path: false,
-    reverse: true,
-  },
-];
 
 export const AuthPage: React.FC = () => {
   const navigate = useNavigate();
