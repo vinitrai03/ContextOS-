@@ -82,7 +82,7 @@ export const AuthPage: React.FC = () => {
     setRole('ADMIN');
     setLoading(true);
     try {
-      await apiClient.post('/auth/register', { name: 'Admin User', email: 'admin@contextos.local', password: 'admin123', role: 'ADMIN' }).catch(() => {});
+      await apiClient.post('/auth/register', { name: 'Admin User', email: 'admin@contextos.local', password: 'admin123', role: 'ADMIN' }).catch(() => { });
       const res = await apiClient.post('/auth/login', { email: 'admin@contextos.local', password: 'admin123' });
       const { token, refreshToken, ...user } = res.data;
       setAuth(user, token, refreshToken);
@@ -101,7 +101,7 @@ export const AuthPage: React.FC = () => {
     setRole('PARTICIPANT');
     setLoading(true);
     try {
-      await apiClient.post('/auth/register', { name: 'Participant User', email: 'alice@example.com', password: 'password', role: 'PARTICIPANT' }).catch(() => {});
+      await apiClient.post('/auth/register', { name: 'Participant User', email: 'alice@example.com', password: 'password', role: 'PARTICIPANT' }).catch(() => { });
       const res = await apiClient.post('/auth/login', { email: 'alice@example.com', password: 'password' });
       const { token, refreshToken, ...user } = res.data;
       setAuth(user, token, refreshToken);
@@ -119,7 +119,7 @@ export const AuthPage: React.FC = () => {
       {/* Left Pane - Animated Visuals & Testimonial */}
       <div className="bg-surface/40 relative hidden h-full flex-col border-r border-border p-10 lg:flex overflow-hidden">
         <div className="from-background absolute inset-0 z-10 bg-gradient-to-t to-transparent opacity-80" />
-        
+
         {/* Brand header */}
         <div className="z-10 flex items-center gap-3">
           <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand-DEFAULT via-brand-accent to-brand-cyan flex items-center justify-center text-white font-extrabold shadow-glow-indigo text-lg">
@@ -165,9 +165,9 @@ export const AuthPage: React.FC = () => {
         </div>
 
         {/* Back to Home Button */}
-        <Button 
-          variant="ghost" 
-          className="absolute top-7 left-6 text-text-secondary hover:text-text-primary" 
+        <Button
+          variant="ghost"
+          className="absolute top-7 left-6 text-text-secondary hover:text-text-primary"
           onClick={() => navigate('/')}
         >
           <ChevronLeftIcon className="size-4 mr-2" />
@@ -222,20 +222,20 @@ export const AuthPage: React.FC = () => {
 
           {/* Social Icons Quick Logins */}
           <div className="grid grid-cols-2 gap-2">
-            <Button 
-              type="button" 
-              variant="outline" 
-              size="sm" 
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
               className="w-full text-xs"
               onClick={handleQuickDemoAdmin}
             >
               <GoogleIcon className="size-3.5 mr-2" />
               Google
             </Button>
-            <Button 
-              type="button" 
-              variant="outline" 
-              size="sm" 
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
               className="w-full text-xs"
               onClick={handleQuickDemoParticipant}
             >
@@ -249,18 +249,16 @@ export const AuthPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setIsLogin(true)}
-              className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-all ${
-                isLogin ? 'bg-surface shadow text-brand-DEFAULT font-bold' : 'text-text-muted hover:text-text-primary'
-              }`}
+              className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-all ${isLogin ? 'bg-surface shadow text-brand-DEFAULT font-bold' : 'text-text-muted hover:text-text-primary'
+                }`}
             >
               Sign In
             </button>
             <button
               type="button"
               onClick={() => setIsLogin(false)}
-              className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-all ${
-                !isLogin ? 'bg-surface shadow text-brand-DEFAULT font-bold' : 'text-text-muted hover:text-text-primary'
-              }`}
+              className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-all ${!isLogin ? 'bg-surface shadow text-brand-DEFAULT font-bold' : 'text-text-muted hover:text-text-primary'
+                }`}
             >
               Register
             </button>
@@ -326,9 +324,8 @@ export const AuthPage: React.FC = () => {
                   {[0, 1, 2, 3].map((step) => (
                     <div
                       key={step}
-                      className={`h-full flex-1 rounded-full transition-all ${
-                        pwdStrength > step ? strengthColors[pwdStrength] : 'bg-surface-hover'
-                      }`}
+                      className={`h-full flex-1 rounded-full transition-all ${pwdStrength > step ? strengthColors[pwdStrength] : 'bg-surface-hover'
+                        }`}
                     />
                   ))}
                 </div>
@@ -364,13 +361,10 @@ export const AuthPage: React.FC = () => {
 function FloatingPaths({ position }: { position: number }) {
   const paths = Array.from({ length: 36 }, (_, i) => ({
     id: i,
-    d: `M-${380 - i * 5 * position} -${189 + i * 6}C-${
-      380 - i * 5 * position
-    } -${189 + i * 6} -${312 - i * 5 * position} ${216 - i * 6} ${
-      152 - i * 5 * position
-    } ${343 - i * 6}C${616 - i * 5 * position} ${470 - i * 6} ${
-      684 - i * 5 * position
-    } ${875 - i * 6} ${684 - i * 5 * position} ${875 - i * 6}`,
+    d: `M-${380 - i * 5 * position} -${189 + i * 6}C-${380 - i * 5 * position
+      } -${189 + i * 6} -${312 - i * 5 * position} ${216 - i * 6} ${152 - i * 5 * position
+      } ${343 - i * 6}C${616 - i * 5 * position} ${470 - i * 6} ${684 - i * 5 * position
+      } ${875 - i * 6} ${684 - i * 5 * position} ${875 - i * 6}`,
     color: `rgba(99,102,241,${0.1 + i * 0.02})`,
     width: 0.5 + i * 0.03,
   }));

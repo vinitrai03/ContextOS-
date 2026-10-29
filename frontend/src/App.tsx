@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AppShell } from './components/layout/AppShell';
 import { LandingPage } from './pages/LandingPage';
 import { AuthPage } from './pages/AuthPage';
+import DemoOne from './components/ui/demo';
 import { DashboardPage } from './pages/DashboardPage';
 import { CalendarPage } from './pages/CalendarPage';
 import { MeetingSchedulePage } from './pages/MeetingSchedulePage';
@@ -28,6 +29,7 @@ export const App: React.FC = () => {
           {/* Public Landing & Auth Routes */}
           <Route path="/" element={<LandingPage />} />
           <Route path="/auth" element={<AuthPage />} />
+          <Route path="/demo" element={<DemoOne />} />
 
           {/* Authenticated Workspace App Shell */}
           <Route element={<AppShell />}>
