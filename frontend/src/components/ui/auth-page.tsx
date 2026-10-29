@@ -1,923 +1,500 @@
 'use client';
-import React, {
-  memo,
-  ReactNode,
-  useState,
-  ChangeEvent,
-  FormEvent,
-  useEffect,
-  useRef,
-  forwardRef,
-} from 'react';
-import {
-  motion,
-  useAnimation,
-  useInView,
-  useMotionTemplate,
-  useMotionValue,
-} from 'framer-motion';
-import { Eye, EyeOff } from 'lucide-react';
-import { cn } from '@/lib/utils';
 
-// Compatible Image component for Vite/React (replaces next/image)
-const Image = ({ src, alt, width, height, className, unoptimized, ...props }: any) => (
-  <img
-    src={src}
-    alt={alt || ''}
-    width={width}
-    height={height}
-    className={className}
-    loading="lazy"
-    {...props}
-  />
-);
+import React, { FormEvent, ReactNode, useState } from 'react';
+import { Eye, EyeOff, Shield, UserCheck } from 'lucide-react';
 
-// ==================== Input Component ====================
+// ==================== Styles (scoped with a cx- prefix) ====================
 
-const Input = memo(
-  forwardRef(function Input(
-    { className, type, ...props }: React.InputHTMLAttributes<HTMLInputElement>,
-    ref: React.ForwardedRef<HTMLInputElement>
-  ) {
-    const radius = 100; // change this to increase the radius of the hover effect
-    const [visible, setVisible] = useState(false);
+const CSS = `
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400..800;1,400..800&display=swap');
 
-    const mouseX = useMotionValue(0);
-    const mouseY = useMotionValue(0);
-
-    function handleMouseMove({
-      currentTarget,
-      clientX,
-      clientY,
-    }: React.MouseEvent<HTMLDivElement>) {
-      const { left, top } = currentTarget.getBoundingClientRect();
-
-      mouseX.set(clientX - left);
-      mouseY.set(clientY - top);
-    }
-
-    return (
-      <motion.div
-        style={{
-          background: useMotionTemplate`
-        radial-gradient(
-          ${visible ? radius + 'px' : '0px'} circle at ${mouseX}px ${mouseY}px,
-          #3b82f6,
-          transparent 80%
-        )
-      `,
-        }}
-        onMouseMove={handleMouseMove}
-        onMouseEnter={() => setVisible(true)}
-        onMouseLeave={() => setVisible(false)}
-        className='group/input rounded-lg p-[2px] transition duration-300'
-      >
-        <input
-          type={type}
-          className={cn(
-            `shadow-input dark:placeholder-text-neutral-600 flex h-10 w-full rounded-md border-none bg-gray-50 px-3 py-2 text-sm text-black transition duration-400 group-hover/input:shadow-none file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-neutral-400 focus-visible:ring-[2px] focus-visible:ring-neutral-400 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:bg-zinc-800 dark:text-white dark:shadow-[0px_0px_1px_1px_#404040] dark:focus-visible:ring-neutral-600`,
-            className
-          )}
-          ref={ref}
-          {...props}
-        />
-      </motion.div>
-    );
-  })
-);
-
-Input.displayName = 'Input';
-
-// ==================== BoxReveal Component ====================
-
-type BoxRevealProps = {
-  children: ReactNode;
-  width?: string;
-  boxColor?: string;
-  duration?: number;
-  overflow?: string;
-  position?: string;
-  className?: string;
-};
-
-const BoxReveal = memo(function BoxReveal({
-  children,
-  width = 'fit-content',
-  boxColor,
-  duration,
-  overflow = 'hidden',
-  position = 'relative',
-  className,
-}: BoxRevealProps) {
-  const mainControls = useAnimation();
-  const slideControls = useAnimation();
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true });
-
-  useEffect(() => {
-    if (isInView) {
-      slideControls.start('visible');
-      mainControls.start('visible');
-    } else {
-      slideControls.start('hidden');
-      mainControls.start('hidden');
-    }
-  }, [isInView, mainControls, slideControls]);
-
-  return (
-    <section
-      ref={ref}
-      style={{
-        position: position as
-          | 'relative'
-          | 'absolute'
-          | 'fixed'
-          | 'sticky'
-          | 'static',
-        width,
-        overflow,
-      }}
-      className={className}
-    >
-      <motion.div
-        variants={{
-          hidden: { opacity: 0, y: 75 },
-          visible: { opacity: 1, y: 0 },
-        }}
-        initial='hidden'
-        animate={mainControls}
-        transition={{ duration: duration ?? 0.5, delay: 0.25 }}
-      >
-        {children}
-      </motion.div>
-      <motion.div
-        variants={{ hidden: { left: 0 }, visible: { left: '100%' } }}
-        initial='hidden'
-        animate={slideControls}
-        transition={{ duration: duration ?? 0.5, ease: 'easeIn' }}
-        style={{
-          position: 'absolute',
-          top: 4,
-          bottom: 4,
-          left: 0,
-          right: 0,
-          zIndex: 20,
-          background: boxColor ?? '#5046e6',
-          borderRadius: 4,
-        }}
-      />
-    </section>
-  );
-});
-
-// ==================== Ripple Component ====================
-
-type RippleProps = {
-  mainCircleSize?: number;
-  mainCircleOpacity?: number;
-  numCircles?: number;
-  className?: string;
-};
-
-const Ripple = memo(function Ripple({
-  mainCircleSize = 210,
-  mainCircleOpacity = 0.24,
-  numCircles = 11,
-  className = '',
-}: RippleProps) {
-  return (
-    <section
-      className={`max-w-[50%] absolute inset-0 flex items-center justify-center
-        dark:bg-white/5 bg-neutral-50
-        [mask-image:linear-gradient(to_bottom,black,transparent)]
-        dark:[mask-image:linear-gradient(to_bottom,white,transparent)] ${className}`}
-    >
-      {Array.from({ length: numCircles }, (_, i) => {
-        const size = mainCircleSize + i * 70;
-        const opacity = Math.max(0.02, mainCircleOpacity - i * 0.02);
-        const animationDelay = `${i * 0.06}s`;
-        const borderStyle = i === numCircles - 1 ? 'dashed' : 'solid';
-
-        return (
-          <span
-            key={i}
-            className='absolute animate-ripple rounded-full border border-indigo-500/20 dark:border-indigo-400/20'
-            style={{
-              width: `${size}px`,
-              height: `${size}px`,
-              opacity: opacity,
-              animationDelay: animationDelay,
-              borderStyle: borderStyle,
-              borderWidth: '1px',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-            }}
-          />
-        );
-      })}
-    </section>
-  );
-});
-
-// ==================== OrbitingCircles Component ====================
-
-type OrbitingCirclesProps = {
-  className?: string;
-  children: ReactNode;
-  reverse?: boolean;
-  duration?: number;
-  delay?: number;
-  radius?: number;
-  path?: boolean;
-};
-
-const OrbitingCircles = memo(function OrbitingCircles({
-  className,
-  children,
-  reverse = false,
-  duration = 20,
-  delay = 10,
-  radius = 50,
-  path = true,
-}: OrbitingCirclesProps) {
-  return (
-    <>
-      {path && (
-        <svg
-          xmlns='http://www.w3.org/2000/svg'
-          version='1.1'
-          className='pointer-events-none absolute inset-0 size-full'
-        >
-          <circle
-            className='stroke-black/10 stroke-1 dark:stroke-white/10'
-            cx='50%'
-            cy='50%'
-            r={radius}
-            fill='none'
-          />
-        </svg>
-      )}
-      <section
-        style={
-          {
-            '--duration': duration,
-            '--radius': radius,
-            '--delay': -delay,
-          } as React.CSSProperties
-        }
-        className={cn(
-          'absolute flex size-full transform-gpu animate-orbit items-center justify-center rounded-full border bg-black/10 [animation-delay:calc(var(--delay)*1000ms)] dark:bg-white/10',
-          { '[animation-direction:reverse]': reverse },
-          className
-        )}
-      >
-        {children}
-      </section>
-    </>
-  );
-});
-
-// ==================== TechOrbitDisplay Component ====================
-
-type IconConfig = {
-  className?: string;
-  duration?: number;
-  delay?: number;
-  radius?: number;
-  path?: boolean;
-  reverse?: boolean;
-  component: () => React.ReactNode;
-};
-
-type TechnologyOrbitDisplayProps = {
-  iconsArray: IconConfig[];
-  text?: string;
-};
-
-const TechOrbitDisplay = memo(function TechOrbitDisplay({
-  iconsArray,
-  text = 'ContextOS',
-}: TechnologyOrbitDisplayProps) {
-  return (
-    <section className='relative flex h-full w-full flex-col items-center justify-center overflow-hidden rounded-lg select-none'>
-      {/* Central Brand Showcase */}
-      <div className="relative flex flex-col items-center justify-center pointer-events-none z-10">
-        {/* Ambient Multi-Layer Glow Aura */}
-        <div className="absolute -inset-16 bg-gradient-to-r from-indigo-500/30 via-purple-500/25 to-cyan-400/30 blur-3xl rounded-full -z-10 animate-pulse-slow" />
-        <div className="absolute -inset-6 bg-indigo-500/20 blur-xl rounded-full -z-10" />
-
-        {/* Futuristic Status Pill */}
-        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-surface/80 border border-indigo-500/30 backdrop-blur-md shadow-lg shadow-indigo-500/10 mb-3">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500 shadow-[0_0_8px_#06b6d4]"></span>
-          </span>
-          <span className="text-[11px] font-mono tracking-widest uppercase font-bold bg-gradient-to-r from-indigo-300 via-white to-cyan-300 bg-clip-text text-transparent">
-            UNIFIED CONTEXT ENGINE
-          </span>
-        </div>
-
-        {/* Enhanced ContextOS Typography */}
-        <h1 className="text-6xl md:text-7xl lg:text-8xl font-black tracking-tight leading-none text-center">
-          <span className="text-white drop-shadow-[0_2px_16px_rgba(255,255,255,0.35)]">Context</span>
-          <span className="bg-gradient-to-tr from-brand-DEFAULT via-brand-accent to-brand-cyan bg-clip-text text-transparent drop-shadow-[0_4px_30px_rgba(99,102,241,0.8)] ml-0.5">
-            OS
-          </span>
-        </h1>
-
-        {/* Subtitle */}
-        <p className="mt-3 text-xs md:text-sm font-medium tracking-wide text-text-secondary/90 max-w-xs text-center drop-shadow-sm">
-          Autonomous Meeting & Organizational Intelligence
-        </p>
-      </div>
-
-      {iconsArray.map((icon, index) => (
-        <OrbitingCircles
-          key={index}
-          className={icon.className}
-          duration={icon.duration}
-          delay={icon.delay}
-          radius={icon.radius}
-          path={icon.path}
-          reverse={icon.reverse}
-        >
-          {icon.component()}
-        </OrbitingCircles>
-      ))}
-    </section>
-  );
-});
-
-// ==================== AnimatedForm Component ====================
-
-type FieldType = 'text' | 'email' | 'password';
-
-type Field = {
-  label: string;
-  required?: boolean;
-  type: FieldType;
-  placeholder?: string;
-  onChange: (event: ChangeEvent<HTMLInputElement>) => void;
-};
-
-type AnimatedFormProps = {
-  header: string;
-  subHeader?: string;
-  fields: Field[];
-  submitButton: string;
-  textVariantButton?: string;
-  errorField?: string;
-  fieldPerRow?: number;
-  onSubmit: (event: FormEvent<HTMLFormElement>) => void;
-  googleLogin?: string;
-  goTo?: (event: React.MouseEvent<HTMLButtonElement>) => void;
-};
-
-type Errors = {
-  [key: string]: string;
-};
-
-const AnimatedForm = memo(function AnimatedForm({
-  header,
-  subHeader,
-  fields,
-  submitButton,
-  textVariantButton,
-  errorField,
-  fieldPerRow = 1,
-  onSubmit,
-  googleLogin,
-  goTo,
-}: AnimatedFormProps) {
-  const [visible, setVisible] = useState<boolean>(false);
-  const [errors, setErrors] = useState<Errors>({});
-
-  const toggleVisibility = () => setVisible(!visible);
-
-  const validateForm = (event: FormEvent<HTMLFormElement>) => {
-    const currentErrors: Errors = {};
-    fields.forEach((field) => {
-      const value = (event.target as HTMLFormElement)[field.label]?.value;
-
-      if (field.required && !value) {
-        currentErrors[field.label] = `${field.label} is required`;
-      }
-
-      if (field.type === 'email' && value && !/\S+@\S+\.\S+/.test(value)) {
-        currentErrors[field.label] = 'Invalid email address';
-      }
-
-      if (field.type === 'password' && value && value.length < 6) {
-        currentErrors[field.label] =
-          'Password must be at least 6 characters long';
-      }
-    });
-    return currentErrors;
-  };
-
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const formErrors = validateForm(event);
-
-    if (Object.keys(formErrors).length === 0) {
-      onSubmit(event);
-      console.log('Form submitted');
-    } else {
-      setErrors(formErrors);
-    }
-  };
-
-  return (
-    <section className='max-md:w-full flex flex-col gap-4 w-96 mx-auto'>
-      <BoxReveal boxColor='var(--skeleton)' duration={0.3}>
-        <h2 className='font-bold text-3xl text-neutral-800 dark:text-neutral-200'>
-          {header}
-        </h2>
-      </BoxReveal>
-
-      {subHeader && (
-        <BoxReveal boxColor='var(--skeleton)' duration={0.3} className='pb-2'>
-          <p className='text-neutral-600 text-sm max-w-sm dark:text-neutral-300'>
-            {subHeader}
-          </p>
-        </BoxReveal>
-      )}
-
-      {googleLogin && (
-        <>
-          <BoxReveal
-            boxColor='var(--skeleton)'
-            duration={0.3}
-            overflow='visible'
-            width='unset'
-          >
-            <button
-              className='g-button group/btn bg-transparent w-full rounded-md border border-neutral-300 dark:border-neutral-700 h-10 font-medium outline-hidden hover:cursor-pointer'
-              type='button'
-              onClick={() => console.log('Google login clicked')}
-            >
-              <span className='flex items-center justify-center w-full h-full gap-3 text-neutral-800 dark:text-neutral-200'>
-                <Image
-                  src='https://cdn.21st.dev/assets/mirror/89/8948eafec4a9c68b2b3a78a756b4474c05e53431f208149556fb669e3c429be2.png'
-                  width={26}
-                  height={26}
-                  alt='Google Icon'
-                />
-                {googleLogin}
-              </span>
-
-              <BottomGradient />
-            </button>
-          </BoxReveal>
-
-          <BoxReveal boxColor='var(--skeleton)' duration={0.3} width='100%'>
-            <section className='flex items-center gap-4'>
-              <hr className='flex-1 border-1 border-dashed border-neutral-300 dark:border-neutral-700' />
-              <p className='text-neutral-700 text-sm dark:text-neutral-300'>
-                or
-              </p>
-              <hr className='flex-1 border-1 border-dashed border-neutral-300 dark:border-neutral-700' />
-            </section>
-          </BoxReveal>
-        </>
-      )}
-
-      <form onSubmit={handleSubmit}>
-        <section
-          className={`grid grid-cols-1 md:grid-cols-${fieldPerRow} mb-4`}
-        >
-          {fields.map((field) => (
-            <section key={field.label} className='flex flex-col gap-2'>
-              <BoxReveal boxColor='var(--skeleton)' duration={0.3}>
-                <Label htmlFor={field.label}>
-                  {field.label} <span className='text-red-500'>*</span>
-                </Label>
-              </BoxReveal>
-
-              <BoxReveal
-                width='100%'
-                boxColor='var(--skeleton)'
-                duration={0.3}
-                className='flex flex-col space-y-2 w-full'
-              >
-                <section className='relative'>
-                  <Input
-                    type={
-                      field.type === 'password'
-                        ? visible
-                          ? 'text'
-                          : 'password'
-                        : field.type
-                    }
-                    id={field.label}
-                    name={field.label}
-                    placeholder={field.placeholder}
-                    onChange={field.onChange}
-                  />
-
-                  {field.type === 'password' && (
-                    <button
-                      type='button'
-                      onClick={toggleVisibility}
-                      className='absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200'
-                    >
-                      {visible ? (
-                        <Eye className='h-5 w-5' />
-                      ) : (
-                        <EyeOff className='h-5 w-5' />
-                      )}
-                    </button>
-                  )}
-                </section>
-
-                <section className='h-4'>
-                  {errors[field.label] && (
-                    <p className='text-red-500 text-xs'>
-                      {errors[field.label]}
-                    </p>
-                  )}
-                </section>
-              </BoxReveal>
-            </section>
-          ))}
-        </section>
-
-        <BoxReveal width='100%' boxColor='var(--skeleton)' duration={0.3}>
-          {errorField && (
-            <p className='text-red-500 text-sm mb-4'>{errorField}</p>
-          )}
-        </BoxReveal>
-
-        <BoxReveal
-          width='100%'
-          boxColor='var(--skeleton)'
-          duration={0.3}
-          overflow='visible'
-        >
-          <button
-            className='bg-gradient-to-br relative group/btn from-zinc-200 dark:from-zinc-900
-            dark:to-zinc-900 to-zinc-200 block dark:bg-zinc-800 w-full text-black
-            dark:text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] 
-              dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset] outline-hidden hover:cursor-pointer'
-            type='submit'
-          >
-            {submitButton} &rarr;
-            <BottomGradient />
-          </button>
-        </BoxReveal>
-
-        {textVariantButton && goTo && (
-          <BoxReveal boxColor='var(--skeleton)' duration={0.3}>
-            <section className='mt-4 text-center hover:cursor-pointer'>
-              <button
-                type='button'
-                className='text-sm text-blue-500 hover:cursor-pointer outline-hidden'
-                onClick={goTo}
-              >
-                {textVariantButton}
-              </button>
-            </section>
-          </BoxReveal>
-        )}
-      </form>
-    </section>
-  );
-});
-
-const BottomGradient = () => {
-  return (
-    <>
-      <span className='group-hover/btn:opacity-100 block transition duration-500 opacity-0 absolute h-px w-full -bottom-px inset-x-0 bg-gradient-to-r from-transparent via-cyan-500 to-transparent' />
-      <span className='group-hover/btn:opacity-100 blur-sm block transition duration-500 opacity-0 absolute h-px w-1/2 mx-auto -bottom-px inset-x-10 bg-gradient-to-r from-transparent via-indigo-500 to-transparent' />
-    </>
-  );
-};
-
-// ==================== AuthTabs Component ====================
-
-interface AuthTabsProps {
-  formFields: {
-    header: string;
-    subHeader?: string;
-    fields: Array<{
-      label: string;
-      required?: boolean;
-      type: FieldType;
-      placeholder?: string;
-      onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-    }>;
-    submitButton: string;
-    textVariantButton?: string;
-    errorField?: string;
-  };
-  goTo: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+:root {
+  --font-inter-tight: 'Inter Tight', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --cx-bg: #fff;
+  --cx-fg: #0a0a0a;
+  --cx-mut: #737373;
+  --cx-line: #e5e5e5;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --cx-bg: #0a0a0a;
+    --cx-fg: #fafafa;
+    --cx-mut: #8a8a8a;
+    --cx-line: #262626;
+  }
+}
+:root[data-theme='dark'], .dark {
+  --cx-bg: #0a0a0a;
+  --cx-fg: #fafafa;
+  --cx-mut: #8a8a8a;
+  --cx-line: #262626;
 }
 
-const AuthTabs = memo(function AuthTabs({
-  formFields,
-  goTo,
-  handleSubmit,
-}: AuthTabsProps) {
-  return (
-    <div className='flex max-lg:justify-center w-full md:w-auto'>
-      <div className='w-full lg:w-1/2 h-[100dvh] flex flex-col justify-center items-center max-lg:px-[10%]'>
-        <AnimatedForm
-          {...(formFields as any)}
-          fieldPerRow={1}
-          onSubmit={handleSubmit}
-          goTo={goTo}
-          googleLogin='Login with Google'
-        />
-      </div>
-    </div>
-  );
-});
+.cx-page{display:grid;grid-template-columns:1fr 1fr;min-height:100dvh;background:var(--cx-bg);color:var(--cx-fg);font-family:var(--font-inter-tight),system-ui,-apple-system,'Segoe UI',sans-serif;font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.cx-page *,.cx-page *::before,.cx-page *::after{box-sizing:border-box}
+.cx-page button,.cx-page input{font:inherit;color:inherit}
+.cx-page :focus-visible{outline:2px solid var(--cx-fg);outline-offset:3px}
+.cx-label{font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--cx-mut)}
 
-// ==================== Label Component ====================
+/* left (always black) */
+.cx-left{position:relative;display:flex;flex-direction:column;min-height:100dvh;padding:40px 44px;overflow:hidden;background:#0a0a0a;color:#fafafa}
+.cx-left::before{content:'';position:absolute;inset:0;opacity:.09;pointer-events:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+.cx-left .cx-label{color:#8a8a8a}
+.cx-frame{position:absolute;inset:18px;border:1px solid rgba(255,255,255,.1);pointer-events:none}
+.cx-top{position:relative;display:flex;align-items:center;justify-content:space-between}
+.cx-logo{font-size:18px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase}
+.cx-nav{display:flex;gap:26px}
+.cx-mid{position:relative;flex:1;min-height:0;display:flex;align-items:center;justify-content:center}
+.cx-stage{position:relative;flex:none;width:480px;height:480px}
+@media (max-height:760px){.cx-stage{transform:scale(.78)}}
+.cx-ring{position:absolute;left:50%;top:50%;border-radius:50%;border:1px solid rgba(255,255,255,.14);transform:translate(-50%,-50%)}
+.cx-ring.cx-dash{border-style:dashed;border-color:rgba(255,255,255,.1)}
+.cx-hub{position:absolute;left:50%;top:50%;display:grid;place-items:center;width:84px;height:84px;margin:-42px 0 0 -42px;border-radius:50%;border:1px solid rgba(255,255,255,.2);background:#0a0a0a}
+.cx-hub svg{width:46px;height:46px}
+.cx-hub i{position:absolute;inset:-10px;border-radius:50%;border:1px solid rgba(255,255,255,.35);animation:cx-beat 2.8s ease-out infinite}
+.cx-orb{position:absolute;left:50%;top:50%;display:grid;place-items:center;width:40px;height:40px;margin:-20px 0 0 -20px;padding:8px;border-radius:50%;background:#fafafa;animation:cx-orbit 24s linear infinite;animation-delay:calc(var(--d)*-1s);animation-direction:var(--dir,normal);box-shadow:0 4px 14px rgba(0,0,0,0.5)}
+.cx-orb svg{width:100%;height:100%}
+.cx-bottom{position:relative}
+.cx-bottom h1{margin:0;font-size:clamp(46px,5.6vw,88px);font-weight:700;line-height:.92;letter-spacing:-.055em}
+.cx-bottom em,.cx-h2 em{font-style:normal;color:var(--cx-mut)}
+.cx-left .cx-bottom em{color:#8a8a8a}
+.cx-stats{display:flex;gap:44px;margin-top:28px;padding-top:20px;border-top:1px solid rgba(255,255,255,.14)}
+.cx-stats b{display:block;font-size:32px;font-weight:700;letter-spacing:-.04em;line-height:1.1}
 
-interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {
-  htmlFor?: string;
-}
+/* right */
+.cx-right{position:relative;display:flex;flex-direction:column;min-height:100dvh;padding:28px 44px;border-left:1px solid var(--cx-line)}
+.cx-rtop{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.cx-mbrand{display:none;font-weight:800;text-transform:uppercase}
+.cx-actions{display:flex;align-items:center;gap:10px;margin-left:auto}
+.cx-pill{padding:9px 18px;border:1px solid var(--cx-fg);border-radius:99px;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--cx-fg);text-decoration:none;transition:background .2s,color .2s;cursor:pointer}
+.cx-pill:hover{background:var(--cx-fg);color:var(--cx-bg)}
+.cx-theme{padding:8px 14px;border:1px solid var(--cx-line);border-radius:99px;background:transparent;cursor:pointer;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--cx-mut)}
+.cx-theme:hover{color:var(--cx-fg);border-color:var(--cx-fg)}
+.cx-center{flex:1;display:flex;align-items:center;justify-content:center;padding:20px 0}
+.cx-form{width:372px;max-width:100%}
+.cx-fx{animation:cx-up .8s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i)*.07s + .05s)}
+.cx-eyebrow{margin-bottom:18px}
+.cx-h2{margin:0 0 10px;font-size:clamp(46px,4.8vw,72px);font-weight:700;line-height:.92;letter-spacing:-.055em}
+.cx-sub{margin:0 0 30px;color:var(--cx-mut)}
+.cx-gbtn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;height:50px;border:1px solid var(--cx-line);border-radius:99px;background:transparent;cursor:pointer;font-weight:500;transition:border-color .2s}
+.cx-gbtn:hover{border-color:var(--cx-fg)}
+.cx-gbtn svg{width:18px;height:18px}
+.cx-or{display:flex;align-items:center;gap:14px;margin:22px 0 6px}
+.cx-or::before,.cx-or::after{content:'';flex:1;height:1px;background:var(--cx-line)}
+.cx-ln{position:relative;margin-top:8px;padding-top:16px;border-bottom:1px solid var(--cx-line)}
+.cx-ln::after{content:'';position:absolute;left:0;bottom:-1px;width:100%;height:1px;background:var(--cx-fg);transform:scaleX(0);transform-origin:left;transition:transform .4s cubic-bezier(.2,.7,.2,1)}
+.cx-ln:focus-within::after{transform:scaleX(1)}
+.cx-ln input{display:block;width:100%;height:38px;padding:0;border:0;background:transparent;font-size:16px}
+.cx-ln input:focus-visible{outline:0}
+.cx-ln input::placeholder{color:var(--cx-mut);opacity:.55}
+.cx-eye{position:absolute;right:0;bottom:6px;padding:4px;border:0;background:none;cursor:pointer;color:var(--cx-mut)}
+.cx-eye:hover{color:var(--cx-fg)}
+.cx-err{min-height:18px;margin:4px 0 0;font-size:11px;color:#e5484d}
+.cx-row{display:flex;justify-content:flex-end;margin:4px 0 22px}
+.cx-row button{padding:0;border:0;background:none;cursor:pointer;font-size:13px;color:var(--cx-mut);text-decoration:underline;text-underline-offset:3px}
+.cx-row button:hover{color:var(--cx-fg)}
+.cx-go{display:flex;align-items:center;justify-content:space-between;width:100%;height:54px;padding:0 22px;border:0;border-radius:99px;background:var(--cx-fg);color:var(--cx-bg);font-weight:600;cursor:pointer}
+.cx-go:disabled{opacity:.6;cursor:wait}
+.cx-go span{transition:transform .3s cubic-bezier(.2,.7,.2,1)}
+.cx-go:hover:not(:disabled) span{transform:translateX(6px)}
+.cx-foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
+.cx-live{display:inline-flex;align-items:center;gap:7px}
+.cx-live::before{content:'';width:6px;height:6px;border-radius:50%;background:#2fbf71}
 
-const Label = memo(function Label({ className, ...props }: LabelProps) {
-  return (
-    <label
-      className={cn(
-        'text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-neutral-800 dark:text-neutral-200',
-        className
-      )}
-      {...props}
-    />
-  );
-});
+.cx-quick-demos{margin-top:20px;padding-top:16px;border-top:1px solid var(--cx-line);display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cx-demo-btn{display:flex;align-items:center;justify-content:center;gap:6px;height:38px;border:1px solid var(--cx-line);border-radius:99px;background:transparent;font-size:12px;font-weight:600;cursor:pointer;transition:border-color .2s,background .2s}
+.cx-demo-btn:hover{border-color:var(--cx-fg);background:rgba(255,255,255,0.04)}
 
-// ==================== Meeting Platform Logos ====================
+@keyframes cx-beat{from{transform:scale(.85);opacity:.9}to{transform:scale(1.5);opacity:0}}
+@keyframes cx-orbit{from{transform:rotate(0) translateY(calc(var(--r)*1px)) rotate(0)}to{transform:rotate(360deg) translateY(calc(var(--r)*1px)) rotate(-360deg)}}
+@keyframes cx-up{from{opacity:0;transform:translateY(22px)}}
 
-const wrapLogoBadge = (children: React.ReactNode, name: string) => () => (
-  <div
-    className="size-11 rounded-full bg-surface/90 border border-white/20 backdrop-blur-xl shadow-xl shadow-black/50 flex items-center justify-center p-2 hover:scale-125 hover:border-brand-DEFAULT/60 transition-all duration-300 group cursor-pointer"
-    title={name}
-  >
-    {children}
-  </div>
-);
+@media (max-width:1023px){.cx-page{grid-template-columns:1fr}.cx-left{display:none}.cx-right{padding:24px;border-left:0}.cx-mbrand{display:block}}
+@media (prefers-reduced-motion:reduce){.cx-orb,.cx-hub i{animation-play-state:paused}.cx-fx{animation:none}}
+`;
 
-// High-fidelity self-contained vector brand logos (0 network latency, 0 broken images)
-const GoogleMeetIcon = () => (
-  <svg viewBox="0 0 48 48" className="w-5 h-5">
-    <rect width="20" height="24" x="4" y="12" rx="4" fill="#00832d" />
-    <path fill="#006622" d="M24 16v16l14 8V8l-14 8z" />
-    <path fill="#26a69a" d="M4 16c0-2.2 1.8-4 4-4h16v24H8c-2.2 0-4-1.8-4-4V16z" />
-    <path fill="#00ac47" d="M24 12h-8c-2.2 0-4 1.8-4 4v16c0 2.2 1.8 4 4 4h8V12z" />
-    <path fill="#ea4335" d="M38 8.5L24 18v12l14 9.5V8.5z" />
-    <path fill="#ffba00" d="M38 39.5l-14-9.5v6l10 6.5 4-3z" />
-  </svg>
-);
+// ==================== Logos (inline, high fidelity) ====================
 
-const ZoomIcon = () => (
-  <svg viewBox="0 0 48 48" className="w-5 h-5">
-    <circle cx="24" cy="24" r="22" fill="#2D8CFF" />
-    <rect x="11" y="16" width="16" height="16" rx="3" fill="#ffffff" />
-    <polygon points="29,20 37,15 37,33 29,28" fill="#ffffff" />
-  </svg>
-);
+const LOGOS: Record<string, ReactNode> = {
+  meet: (
+    <svg viewBox='0 0 100 100' role='img' aria-label='Google Meet'>
+      <rect x='8' y='26' width='56' height='48' rx='9' fill='#00AC47' />
+      <path d='M64 44 92 26v48L64 56z' fill='#00832D' />
+      <path d='M8 35a9 9 0 0 1 9-9h12v22H8z' fill='#EA4335' />
+      <path d='M8 52h21v22H17a9 9 0 0 1-9-9z' fill='#0066DA' />
+      <path d='M29 26h35v22H29z' fill='#FFBA00' />
+    </svg>
+  ),
+  zoom: (
+    <svg viewBox='0 0 100 100' role='img' aria-label='Zoom'>
+      <rect width='100' height='100' rx='24' fill='#2D8CFF' />
+      <rect x='16' y='32' width='43' height='36' rx='8' fill='#fff' />
+      <path d='M63 45 84 32v36L63 55z' fill='#fff' />
+    </svg>
+  ),
+  teams: (
+    <svg viewBox='0 0 100 100' role='img' aria-label='Microsoft Teams'>
+      <rect width='100' height='100' rx='22' fill='#5059C9' />
+      <path d='M28 32h44v12H56v28H44V44H28z' fill='#fff' />
+    </svg>
+  ),
+  skype: (
+    <svg viewBox='0 0 100 100' role='img' aria-label='Skype'>
+      <circle cx='50' cy='50' r='48' fill='#00AFF0' />
+      <text x='50' y='68' textAnchor='middle' fontSize='56' fontWeight='700' fill='#fff' fontFamily='Arial, sans-serif'>
+        S
+      </text>
+    </svg>
+  ),
+  webex: (
+    <svg viewBox='0 0 100 100' role='img' aria-label='Cisco Webex'>
+      <circle cx='50' cy='50' r='48' fill='#00BCEB' />
+      <path d='M22 36l10 30 10-20 10 20 10-30' fill='none' stroke='#fff' strokeWidth='8' strokeLinecap='round' strokeLinejoin='round' />
+    </svg>
+  ),
+  jitsi: (
+    <svg viewBox='0 0 100 100' role='img' aria-label='Jitsi Meet'>
+      <rect x='6' y='14' width='88' height='62' rx='18' fill='#1D76BA' />
+      <path d='M26 76 22 92 44 76z' fill='#1D76BA' />
+      <circle cx='50' cy='45' r='14' fill='#fff' />
+    </svg>
+  ),
+  slack: (
+    <svg viewBox='0 0 100 100' role='img' aria-label='Slack'>
+      <rect x='8' y='38' width='42' height='16' rx='8' fill='#36C5F0' />
+      <rect x='46' y='8' width='16' height='42' rx='8' fill='#2EB67D' />
+      <rect x='50' y='46' width='42' height='16' rx='8' fill='#ECB22E' />
+      <rect x='38' y='50' width='16' height='42' rx='8' fill='#E01E5A' />
+    </svg>
+  ),
+  zoho: (
+    <svg viewBox='0 0 100 100' role='img' aria-label='Zoho Meeting'>
+      <rect width='100' height='100' rx='20' fill='#E42527' />
+      <path d='M26 30h48L30 70h44' fill='none' stroke='#fff' strokeWidth='10' strokeLinejoin='round' />
+    </svg>
+  ),
+};
 
-const TeamsIcon = () => (
-  <svg viewBox="0 0 48 48" className="w-5 h-5">
-    <circle cx="24" cy="24" r="22" fill="#505AC9" />
-    <rect x="12" y="14" width="16" height="20" rx="3" fill="#7B83EB" />
-    <path d="M20 20h-4v-2h10v2h-4v10h-2V20z" fill="#ffffff" />
-    <circle cx="34" cy="18" r="4" fill="#C5CBFA" />
-    <path d="M28 26c0-2.2 2.7-4 6-4s6 1.8 6 4v4h-12v-4z" fill="#9CA6F8" />
-  </svg>
-);
-
-const SkypeIcon = () => (
-  <svg viewBox="0 0 48 48" className="w-5 h-5">
-    <circle cx="24" cy="24" r="22" fill="#00AFF0" />
-    <path d="M28.5 28.2c-.7.5-1.8.8-3.1.8-1.5 0-2.7-.4-3.5-1.1-.9-.8-1.3-1.8-1.3-3.1 0-.9.3-1.7.9-2.2.6-.5 1.5-.9 2.7-1.2l2.3-.5c1.4-.3 2.1-.9 2.1-1.7 0-.7-.3-1.3-.9-1.7-.6-.4-1.5-.6-2.5-.6-1.1 0-2 .2-2.7.7-.7.5-1 1.1-1 2h-2.8c0-1.4.6-2.5 1.7-3.3 1.1-.8 2.7-1.3 4.7-1.3 1.9 0 3.4.4 4.5 1.2 1.1.8 1.6 1.9 1.6 3.3 0 1-.3 1.8-.9 2.4-.6.6-1.5 1-2.7 1.3l-2.2.5c-1.4.3-2.1.9-2.1 1.7 0 .7.3 1.3 1 1.7.7.4 1.7.6 2.8.6 1.2 0 2.2-.3 3-.8.8-.6 1.2-1.3 1.2-2.3h2.8c0 1.5-.6 2.7-1.7 3.5z" fill="#ffffff" />
-  </svg>
-);
-
-const WebexIcon = () => (
-  <svg viewBox="0 0 48 48" className="w-5 h-5">
-    <circle cx="24" cy="24" r="22" fill="#0D2738" />
-    <path d="M16 28c0-4.4 3.6-8 8-8s8 3.6 8 8" stroke="#00BC87" strokeWidth="3" strokeLinecap="round" fill="none" />
-    <circle cx="24" cy="28" r="4" fill="#00BC87" />
-    <circle cx="15" cy="22" r="3" fill="#00D799" />
-    <circle cx="33" cy="22" r="3" fill="#00A373" />
-  </svg>
-);
-
-const JitsiIcon = () => (
-  <svg viewBox="0 0 48 48" className="w-5 h-5">
-    <circle cx="24" cy="24" r="22" fill="#17A0DB" />
-    <path d="M24 12c-5.5 0-10 4.5-10 10v6c0 4.4 3.6 8 8 8h4c4.4 0 8-3.6 8-8v-6c0-5.5-4.5-10-10-10zm-3 12c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6 0c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z" fill="#ffffff" />
-  </svg>
-);
-
-const SlackIcon = () => (
-  <svg viewBox="0 0 48 48" className="w-5 h-5">
-    <circle cx="24" cy="24" r="22" fill="#1E1035" />
-    <g transform="translate(13, 13) scale(0.95)">
-      <path d="M6 10a2 2 0 11-2-2h2v2zm1 0a2 2 0 114 0v5a2 2 0 11-4 0v-5z" fill="#36C5F0" />
-      <path d="M14 6a2 2 0 112-2v2h-2zm0 1a2 2 0 110 4H9a2 2 0 110-4h5z" fill="#2EB67D" />
-      <path d="M18 14a2 2 0 112 2h-2v-2zm-1 0a2 2 0 11-4 0V9a2 2 0 114 0v5z" fill="#E01E5A" />
-      <path d="M10 18a2 2 0 11-2 2v-2h2zm0-1a2 2 0 110-4h5a2 2 0 110 4h-5z" fill="#ECB22E" />
-    </g>
-  </svg>
-);
-
-const ZohoIcon = () => (
-  <svg viewBox="0 0 48 48" className="w-5 h-5">
-    <circle cx="24" cy="24" r="22" fill="#1C2833" />
-    <rect x="14" y="14" width="9" height="9" rx="2" fill="#E42528" />
-    <rect x="25" y="14" width="9" height="9" rx="2" fill="#229954" />
-    <rect x="14" y="25" width="9" height="9" rx="2" fill="#2980B9" />
-    <rect x="25" y="25" width="9" height="9" rx="2" fill="#F39C12" />
-  </svg>
-);
-
-const iconsArray: IconConfig[] = [
-  // Inner orbit
-  {
-    component: wrapLogoBadge(<GoogleMeetIcon />, 'Google Meet'),
-    className: 'size-[44px] border-none bg-transparent',
-    duration: 22,
-    delay: 20,
-    radius: 110,
-    path: false,
-    reverse: false,
-  },
-  {
-    component: wrapLogoBadge(<ZoomIcon />, 'Zoom'),
-    className: 'size-[44px] border-none bg-transparent',
-    duration: 22,
-    delay: 9,
-    radius: 110,
-    path: false,
-    reverse: false,
-  },
-
-  // Second orbit (reverse)
-  {
-    component: wrapLogoBadge(<TeamsIcon />, 'Microsoft Teams'),
-    className: 'size-[44px] border-none bg-transparent',
-    duration: 26,
-    delay: 18,
-    radius: 170,
-    path: false,
-    reverse: true,
-  },
-  {
-    component: wrapLogoBadge(<SkypeIcon />, 'Skype'),
-    className: 'size-[44px] border-none bg-transparent',
-    duration: 26,
-    delay: 5,
-    radius: 170,
-    path: false,
-    reverse: true,
-  },
-
-  // Third orbit
-  {
-    component: wrapLogoBadge(<WebexIcon />, 'Cisco Webex'),
-    className: 'size-[44px] border-none bg-transparent',
-    duration: 30,
-    delay: 24,
-    radius: 230,
-    path: false,
-    reverse: false,
-  },
-  {
-    component: wrapLogoBadge(<JitsiIcon />, 'Jitsi Meet'),
-    className: 'size-[44px] border-none bg-transparent',
-    duration: 30,
-    delay: 9,
-    radius: 230,
-    path: false,
-    reverse: false,
-  },
-
-  // Outer orbit (reverse)
-  {
-    component: wrapLogoBadge(<SlackIcon />, 'Slack'),
-    className: 'size-[44px] border-none bg-transparent',
-    duration: 34,
-    delay: 22,
-    radius: 290,
-    path: false,
-    reverse: true,
-  },
-  {
-    component: wrapLogoBadge(<ZohoIcon />, 'Zoho Meeting'),
-    className: 'size-[44px] border-none bg-transparent',
-    duration: 34,
-    delay: 5,
-    radius: 290,
-    path: false,
-    reverse: true,
-  },
+// 4 logos per ring, evenly spaced (delay steps of 6s on a 24s loop)
+const ORBITS: { key: string; radius: number; delay: number; reverse?: boolean }[] = [
+  { key: 'meet', radius: 150, delay: 0 },
+  { key: 'zoom', radius: 150, delay: 6 },
+  { key: 'teams', radius: 150, delay: 12 },
+  { key: 'skype', radius: 150, delay: 18 },
+  { key: 'webex', radius: 220, delay: 3, reverse: true },
+  { key: 'jitsi', radius: 220, delay: 9, reverse: true },
+  { key: 'slack', radius: 220, delay: 15, reverse: true },
+  { key: 'zoho', radius: 220, delay: 21, reverse: true },
 ];
 
-// ==================== Demo (full sign-in page) ====================
+const STATS = [
+  { value: '8+', label: 'Platforms' },
+  { value: '100%', label: 'Searchable' },
+  { value: '0', label: 'Notes to take' },
+];
 
-type SignInData = {
-  email: string;
-  password: string;
+// ==================== Small pieces ====================
+
+function Mark({ stroke = 6 }: { stroke?: number }) {
+  return (
+    <svg viewBox='0 0 120 120' fill='none' stroke='#fff' strokeWidth={stroke} aria-hidden='true'>
+      <path d='M60 60V18M60 60l36-21M60 60l36 21M60 60v42M60 60 24 81M60 60 24 39' />
+      {[
+        [60, 18],
+        [96, 39],
+        [96, 81],
+        [60, 102],
+        [24, 81],
+        [24, 39],
+      ].map(([cx, cy]) => (
+        <circle key={`${cx}-${cy}`} cx={cx} cy={cy} r='9' fill='#fff' />
+      ))}
+    </svg>
+  );
+}
+
+function GoogleIcon() {
+  return (
+    <svg viewBox='0 0 48 48' aria-hidden='true'>
+      <path fill='#EA4335' d='M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z' />
+      <path fill='#4285F4' d='M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7.1-10.1 7.1-17.5z' />
+      <path fill='#FBBC05' d='M10.5 28.7a14.5 14.5 0 0 1 0-9.4l-7.9-6.1a24 24 0 0 0 0 21.6l7.9-6.1z' />
+      <path fill='#34A853' d='M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.9 2.3-8.4 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z' />
+    </svg>
+  );
+}
+
+const delay = (i: number) => ({ '--i': i }) as React.CSSProperties;
+
+// ==================== Sign-in page ====================
+
+export type SignInData = { email: string; password: string };
+
+export type SignInPageProps = {
+  onSubmit?: (data: SignInData) => void | Promise<void>;
+  onGoogle?: () => void;
+  onForgotPassword?: () => void;
+  onQuickDemo?: (role: 'ADMIN' | 'PARTICIPANT') => void;
+  requestAccessHref?: string;
+  defaultEmail?: string;
+  defaultPassword?: string;
 };
 
-export function Demo({ onLoginSuccess }: { onLoginSuccess?: (email: string) => void }) {
-  const [formData, setFormData] = useState<SignInData>({
-    email: 'admin@contextos.local',
-    password: 'password123',
-  });
+export function SignInPage({
+  onSubmit,
+  onGoogle,
+  onForgotPassword,
+  onQuickDemo,
+  requestAccessHref = '#',
+  defaultEmail = 'admin@contextos.local',
+  defaultPassword = 'password123',
+}: SignInPageProps) {
+  const [email, setEmail] = useState(defaultEmail);
+  const [password, setPassword] = useState(defaultPassword);
+  const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+  const [loading, setLoading] = useState(false);
 
-  const goToForgotPassword = (
-    event: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>
-  ) => {
-    event.preventDefault();
-    console.log('forgot password');
+  const toggleTheme = () => {
+    const root = document.documentElement;
+    const current =
+      root.getAttribute('data-theme') ??
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    const next = current === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    if (next === 'dark') {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
   };
 
-  const handleInputChange = (
-    event: ChangeEvent<HTMLInputElement>,
-    name: keyof SignInData
-  ) => {
-    const value = event.target.value;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  const validate = () => {
+    const next: { email?: string; password?: string } = {};
+    if (!email) next.email = 'Email is required';
+    else if (!/\S+@\S+\.\S+/.test(email)) next.email = 'Invalid email address';
+    if (!password) next.password = 'Password is required';
+    else if (password.length < 6) next.password = 'Password must be at least 6 characters long';
+    return next;
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log('Form submitted', formData);
-    if (onLoginSuccess) {
-      onLoginSuccess(formData.email);
+    const next = validate();
+    setErrors(next);
+    if (Object.keys(next).length > 0) return;
+
+    setLoading(true);
+    try {
+      await onSubmit?.({ email, password });
+    } finally {
+      setLoading(false);
     }
   };
 
-  const formFields = {
-    header: 'Welcome back',
-    subHeader: 'Sign in to your ContextOS account',
-    fields: [
-      {
-        label: 'Email',
-        required: true,
-        type: 'email' as FieldType,
-        placeholder: 'Enter your email address',
-        onChange: (event: ChangeEvent<HTMLInputElement>) =>
-          handleInputChange(event, 'email'),
-      },
-      {
-        label: 'Password',
-        required: true,
-        type: 'password' as FieldType,
-        placeholder: 'Enter your password',
-        onChange: (event: ChangeEvent<HTMLInputElement>) =>
-          handleInputChange(event, 'password'),
-      },
-    ],
-    submitButton: 'Sign in',
-    textVariantButton: 'Forgot password?',
-  };
-
   return (
-    <section className='flex min-h-screen w-full bg-background overflow-hidden relative max-lg:justify-center'>
-      {/* Left side: animated meeting-platform logos */}
-      <span className='flex flex-col justify-center items-center w-1/2 relative max-lg:hidden border-r border-border/40'>
-        <Ripple mainCircleSize={100} />
-        <TechOrbitDisplay iconsArray={iconsArray} text='ContextOS' />
-      </span>
+    <div className='cx-page'>
+      <style>{CSS}</style>
 
-      {/* Right side: sign-in form */}
-      <span className='w-1/2 h-[100dvh] flex flex-col justify-center items-center max-lg:w-full max-lg:px-[10%] z-10'>
-        <AuthTabs
-          formFields={formFields}
-          goTo={goToForgotPassword}
-          handleSubmit={handleSubmit}
-        />
-      </span>
-    </section>
+      {/* ---------- Left: brand + orbit ---------- */}
+      <aside className='cx-left' aria-hidden='true'>
+        <div className='cx-frame' />
+        <div className='cx-top'>
+          <div className='cx-logo'>ContextOS.</div>
+          <nav className='cx-label cx-nav'>
+            <span>Meetings</span>
+            <span>Memory</span>
+            <span>Ask</span>
+          </nav>
+        </div>
+
+        <div className='cx-mid'>
+          <div className='cx-stage'>
+            <div className='cx-ring' style={{ width: 300, height: 300 }} />
+            <div className='cx-ring cx-dash' style={{ width: 440, height: 440 }} />
+            <div className='cx-hub'>
+              <i />
+              <Mark />
+            </div>
+            {ORBITS.map((o) => (
+              <div
+                key={o.key}
+                className='cx-orb'
+                style={
+                  {
+                    '--r': o.radius,
+                    '--d': o.delay,
+                    '--dir': o.reverse ? 'reverse' : 'normal',
+                  } as React.CSSProperties
+                }
+              >
+                {LOGOS[o.key]}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className='cx-bottom'>
+          <h1>
+            Every meeting.
+            <br />
+            <em>Remembered.</em>
+          </h1>
+          <div className='cx-stats'>
+            {STATS.map((s) => (
+              <div key={s.label}>
+                <b>{s.value}</b>
+                <span className='cx-label'>{s.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </aside>
+
+      {/* ---------- Right: form ---------- */}
+      <main className='cx-right'>
+        <div className='cx-rtop'>
+          <div className='cx-mbrand'>ContextOS.</div>
+          <div className='cx-actions'>
+            <a className='cx-pill' href={requestAccessHref}>
+              Request access
+            </a>
+            <button className='cx-theme' type='button' onClick={toggleTheme}>
+              Theme
+            </button>
+          </div>
+        </div>
+
+        <div className='cx-center'>
+          <div className='cx-form'>
+            <div className='cx-label cx-eyebrow cx-fx' style={delay(0)}>
+              Sign in
+            </div>
+            <h2 className='cx-h2 cx-fx' style={delay(1)}>
+              Welcome
+              <br />
+              <em>back.</em>
+            </h2>
+            <p className='cx-sub cx-fx' style={delay(2)}>
+              Sign in to your ContextOS account.
+            </p>
+
+            <button
+              type='button'
+              className='cx-gbtn cx-fx'
+              style={delay(3)}
+              onClick={onGoogle ?? (() => console.log('Google login clicked'))}
+            >
+              <GoogleIcon />
+              Continue with Google
+            </button>
+
+            <div className='cx-or cx-label cx-fx' style={delay(4)}>
+              or
+            </div>
+
+            <form onSubmit={handleSubmit} noValidate>
+              <div className='cx-fx' style={delay(5)}>
+                <div className='cx-ln'>
+                  <label htmlFor='cx-email' className='cx-label'>
+                    Email
+                  </label>
+                  <input
+                    id='cx-email'
+                    type='email'
+                    autoComplete='email'
+                    placeholder='you@company.com'
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </div>
+                <p className='cx-err' role='alert'>
+                  {errors.email}
+                </p>
+              </div>
+
+              <div className='cx-fx' style={delay(6)}>
+                <div className='cx-ln'>
+                  <label htmlFor='cx-password' className='cx-label'>
+                    Password
+                  </label>
+                  <input
+                    id='cx-password'
+                    type={showPassword ? 'text' : 'password'}
+                    autoComplete='current-password'
+                    placeholder='At least 6 characters'
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                  <button
+                    type='button'
+                    className='cx-eye'
+                    onClick={() => setShowPassword((v) => !v)}
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
+                  </button>
+                </div>
+                <p className='cx-err' role='alert'>
+                  {errors.password}
+                </p>
+              </div>
+
+              <div className='cx-row cx-fx' style={delay(7)}>
+                <button
+                  type='button'
+                  onClick={onForgotPassword ?? (() => console.log('forgot password'))}
+                >
+                  Forgot password?
+                </button>
+              </div>
+
+              <button type='submit' className='cx-go cx-fx' style={delay(8)} disabled={loading}>
+                {loading ? 'Signing in…' : 'Sign in'} <span>&rarr;</span>
+              </button>
+
+              {/* 1-Click Instant Demo Access */}
+              {onQuickDemo && (
+                <div className='cx-quick-demos cx-fx' style={delay(9)}>
+                  <button
+                    type='button'
+                    className='cx-demo-btn'
+                    onClick={() => onQuickDemo('ADMIN')}
+                  >
+                    <Shield size={14} className="text-indigo-400" />
+                    <span>Admin Demo</span>
+                  </button>
+                  <button
+                    type='button'
+                    className='cx-demo-btn'
+                    onClick={() => onQuickDemo('PARTICIPANT')}
+                  >
+                    <UserCheck size={14} className="text-cyan-400" />
+                    <span>User Demo</span>
+                  </button>
+                </div>
+              )}
+            </form>
+          </div>
+        </div>
+
+        <div className='cx-foot cx-label'>
+          <span className='cx-live'>All systems normal</span>
+          <span>&copy; 2026 ContextOS</span>
+        </div>
+      </main>
+    </div>
   );
 }
 
-// Default export / component alias for backwards compatibility
-export const AuthPage = Demo;
-export default Demo;
-
-// ==================== Exports ====================
+// Backwards-compatibility aliases and exports
+export const AuthPage = SignInPage;
+export default SignInPage;
 
 export {
-  Input,
-  BoxReveal,
-  Ripple,
-  OrbitingCircles,
-  TechOrbitDisplay,
-  AnimatedForm,
-  AuthTabs,
-  Label,
-  BottomGradient,
-  iconsArray,
+  LOGOS,
+  ORBITS,
+  STATS,
+  Mark,
+  GoogleIcon,
 };
