@@ -52,9 +52,9 @@ const CSS = `
 .cx-hub{position:absolute;left:50%;top:50%;display:grid;place-items:center;width:84px;height:84px;margin:-42px 0 0 -42px;border-radius:50%;border:1px solid rgba(255,255,255,.2);background:#0a0a0a}
 .cx-hub svg{width:46px;height:46px}
 .cx-hub i{position:absolute;inset:-10px;border-radius:50%;border:1px solid rgba(255,255,255,.35);animation:cx-beat 2.8s ease-out infinite}
-.cx-orb{position:absolute;left:50%;top:50%;display:grid;place-items:center;width:44px;height:44px;margin:-22px 0 0 -22px;padding:8px;border-radius:50%;background:rgba(18,22,32,.9);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(8px);box-shadow:0 4px 16px rgba(0,0,0,.6);animation:cx-orbit 24s linear infinite;animation-delay:calc(var(--d)*-1s);animation-direction:var(--dir,normal);transition:transform .25s,border-color .25s}
-.cx-orb:hover{transform:scale(1.25);border-color:rgba(99,102,241,.6);z-index:20}
-.cx-orb svg{width:100%;height:100%}
+.cx-orb{position:absolute;left:50%;top:50%;display:grid;place-items:center;width:40px;height:40px;margin:-20px 0 0 -20px;padding:9px;border-radius:50%;background:#fafafa;animation:cx-orbit 24s linear infinite;animation-delay:calc(var(--d)*-1s);animation-direction:var(--dir,normal);transition:transform .2s}
+.cx-orb:hover{transform:scale(1.15)}
+.cx-orb svg{width:100%;height:100%;filter:grayscale(1) contrast(1.1)}
 .cx-bottom{position:relative}
 .cx-bottom h1{margin:0;font-size:clamp(46px,5.6vw,88px);font-weight:700;line-height:.92;letter-spacing:-.055em}
 .cx-bottom em,.cx-h2 em{font-style:normal;color:var(--cx-mut)}
