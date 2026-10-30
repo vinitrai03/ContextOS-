@@ -6,7 +6,24 @@ import {
   ChevronRight, Cpu, PlusCircle, Handshake 
 } from 'lucide-react';
 import { useAuthStore } from '../../store/useAuthStore';
-import { Badge } from '../ui/Badge';
+
+function MarkSmall() {
+  return (
+    <svg viewBox='0 0 120 120' fill='none' stroke='currentColor' strokeWidth={8} className="w-4 h-4 text-text-primary" aria-hidden='true'>
+      <path d='M60 60V18M60 60l36-21M60 60l36 21M60 60v42M60 60 24 81M60 60 24 39' />
+      {[
+        [60, 18],
+        [96, 39],
+        [96, 81],
+        [60, 102],
+        [24, 81],
+        [24, 39],
+      ].map(([cx, cy]) => (
+        <circle key={`${cx}-${cy}`} cx={cx} cy={cy} r='8' fill='currentColor' />
+      ))}
+    </svg>
+  );
+}
 
 export const Sidebar: React.FC = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -30,7 +47,7 @@ export const Sidebar: React.FC = () => {
 
   return (
     <aside
-      className={`relative h-screen glass-panel border-r border-border transition-all duration-300 flex flex-col z-30 ${
+      className={`relative h-screen bg-surface border-r border-border transition-all duration-300 flex flex-col z-30 select-none ${
         isCollapsed ? 'w-20' : 'w-64'
       }`}
     >
@@ -38,18 +55,18 @@ export const Sidebar: React.FC = () => {
       <div className="flex items-center justify-between p-5 border-b border-border">
         {!isCollapsed && (
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-DEFAULT via-brand-accent to-brand-cyan flex items-center justify-center shadow-glow-indigo text-white font-bold">
-              C
+            <div className="w-8 h-8 rounded-full border border-border bg-surface-hover flex items-center justify-center text-text-primary shadow-minimal">
+              <MarkSmall />
             </div>
             <div>
-              <span className="font-extrabold text-lg tracking-tight text-gradient">ContextOS</span>
-              <div className="text-[10px] text-text-muted tracking-wider uppercase font-mono">v1.0 Capstone</div>
+              <span className="font-extrabold text-base tracking-tight text-text-primary">ContextOS.</span>
+              <div className="text-[10px] text-text-muted tracking-widest uppercase font-mono">Workspace</div>
             </div>
           </div>
         )}
         {isCollapsed && (
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-DEFAULT to-brand-cyan flex items-center justify-center text-white font-bold mx-auto">
-            C
+          <div className="w-8 h-8 rounded-full border border-border bg-surface-hover flex items-center justify-center text-text-primary mx-auto shadow-minimal">
+            <MarkSmall />
           </div>
         )}
         <button
@@ -64,11 +81,11 @@ export const Sidebar: React.FC = () => {
       <div className="p-3">
         <NavLink
           to="/meetings/new"
-          className={`w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-brand-DEFAULT hover:bg-brand-accent text-white font-medium shadow-md shadow-brand-DEFAULT/30 transition-all ${
+          className={`w-full flex items-center justify-center gap-2 py-2 px-3 rounded-full bg-foreground text-background font-semibold text-xs tracking-wider uppercase transition-all hover:opacity-90 ${
             isCollapsed ? 'justify-center px-0' : ''
           }`}
         >
-          <PlusCircle className="w-5 h-5 shrink-0" />
+          <PlusCircle className="w-4 h-4 shrink-0" />
           {!isCollapsed && <span>New Meeting</span>}
         </NavLink>
       </div>
@@ -82,17 +99,19 @@ export const Sidebar: React.FC = () => {
               key={item.path}
               to={item.path}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 group ${
+                `flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-xs tracking-wide transition-all duration-150 group ${
                   isActive
-                    ? 'bg-brand-DEFAULT/15 text-brand-DEFAULT border border-brand-DEFAULT/30 shadow-sm'
-                    : 'text-text-secondary hover:text-text-primary hover:bg-surface-hover'
+                    ? 'bg-surface-hover text-text-primary border border-border font-semibold shadow-minimal'
+                    : 'text-text-secondary hover:text-text-primary hover:bg-surface-hover/70'
                 }`
               }
             >
-              <Icon className={`w-5 h-5 shrink-0 ${item.highlight ? 'text-brand-cyan animate-pulse' : ''}`} />
+              <Icon className="w-4 h-4 shrink-0" />
               {!isCollapsed && <span className="truncate">{item.name}</span>}
               {!isCollapsed && item.highlight && (
-                <Badge variant="cyan" size="sm" className="ml-auto">AI</Badge>
+                <span className="ml-auto text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded border border-border bg-surface text-text-muted">
+                  AI
+                </span>
               )}
             </NavLink>
           );
@@ -101,16 +120,18 @@ export const Sidebar: React.FC = () => {
 
       {/* User Role Footer */}
       {!isCollapsed && user && (
-        <div className="p-4 border-t border-border bg-surface/30 flex items-center justify-between">
+        <div className="p-4 border-t border-border bg-surface/50 flex items-center justify-between">
           <div className="truncate">
             <p className="text-xs font-semibold text-text-primary truncate">{user.name}</p>
             <p className="text-[11px] text-text-muted truncate">{user.email}</p>
           </div>
-          <Badge variant={user.role === 'ADMIN' ? 'purple' : 'info'} size="sm">
+          <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full border border-border bg-surface-hover text-text-secondary">
             {user.role}
-          </Badge>
+          </span>
         </div>
       )}
     </aside>
   );
 };
+
+export default Sidebar;

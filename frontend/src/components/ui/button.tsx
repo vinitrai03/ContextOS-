@@ -6,29 +6,26 @@ import { Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center whitespace-nowrap rounded-full text-xs font-semibold uppercase tracking-wider transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 select-none",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
-        destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline:
-          "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
-        secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
-        primary: "bg-brand-DEFAULT hover:bg-brand-accent text-white shadow-lg shadow-brand-DEFAULT/25 hover:shadow-brand-DEFAULT/40",
-        glow: "bg-gradient-to-r from-brand-DEFAULT via-brand-accent to-brand-cyan text-white shadow-glow-indigo hover:shadow-glow-cyan hover:brightness-110",
-        danger: "bg-status-error text-white hover:bg-red-600 shadow-md shadow-red-500/20",
+        default: "bg-foreground text-background hover:opacity-90 shadow-minimal",
+        destructive: "bg-status-error text-white hover:bg-red-600 shadow-minimal",
+        outline: "border border-border bg-transparent hover:border-foreground/40 text-text-primary",
+        secondary: "bg-surface-hover text-text-primary border border-border hover:border-foreground/30",
+        ghost: "hover:bg-surface-hover text-text-secondary hover:text-text-primary",
+        link: "text-text-primary underline-offset-4 hover:underline capitalize",
+        primary: "bg-foreground text-background hover:opacity-90 shadow-minimal",
+        glow: "bg-foreground text-background hover:opacity-90 shadow-minimal",
+        danger: "bg-status-error text-white hover:bg-red-600",
       },
       size: {
-        default: "h-10 px-4 py-2",
-        sm: "h-9 rounded-md px-3",
-        md: "h-10 px-4 py-2",
-        lg: "h-11 rounded-md px-8",
-        icon: "h-10 w-10",
+        default: "h-9 px-4 py-2",
+        sm: "h-8 px-3 text-[11px]",
+        md: "h-9 px-4 py-2",
+        lg: "h-11 px-7 text-xs",
+        icon: "h-9 w-9 rounded-full",
       },
     },
     defaultVariants: {
@@ -55,7 +52,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         {...props}
       >
-        {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin shrink-0" />}
+        {isLoading && <Loader2 className="w-3.5 h-3.5 mr-2 animate-spin shrink-0" />}
         {!isLoading && icon && <span className="mr-2 inline-flex shrink-0">{icon}</span>}
         {children}
       </Comp>
@@ -65,4 +62,3 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 Button.displayName = "Button"
 
 export { Button, buttonVariants }
-export default Button

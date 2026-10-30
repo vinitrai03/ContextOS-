@@ -2,12 +2,28 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
-  Sparkles, Video, Mail, CheckSquare, GitFork, Cpu, ShieldCheck, 
-  ArrowRight, Play, CheckCircle2, Zap, Database, Lock 
+  Video, Mail, CheckSquare, GitFork, Cpu, ShieldCheck, 
+  ArrowRight, Play, CheckCircle2, Zap, Database, Lock, 
+  Sparkles, Terminal, FileText, Bot
 } from 'lucide-react';
-import { Button } from '../components/ui/button';
-import { GlassCard } from '../components/ui/GlassCard';
-import { Badge } from '../components/ui/Badge';
+
+function Mark({ stroke = 6, className = "w-6 h-6" }: { stroke?: number; className?: string }) {
+  return (
+    <svg viewBox='0 0 120 120' fill='none' stroke='currentColor' strokeWidth={stroke} className={className} aria-hidden='true'>
+      <path d='M60 60V18M60 60l36-21M60 60l36 21M60 60v42M60 60 24 81M60 60 24 39' />
+      {[
+        [60, 18],
+        [96, 39],
+        [96, 81],
+        [60, 102],
+        [24, 81],
+        [24, 39],
+      ].map(([cx, cy]) => (
+        <circle key={`${cx}-${cy}`} cx={cx} cy={cy} r='8' fill='currentColor' />
+      ))}
+    </svg>
+  );
+}
 
 export const LandingPage: React.FC = () => {
   const navigate = useNavigate();
@@ -15,280 +31,246 @@ export const LandingPage: React.FC = () => {
 
   const workflowSteps = [
     {
-      title: '1. Conduct Meeting',
-      subtitle: 'WebRTC Conferencing & Speech STT',
-      desc: 'Real-time video meeting with automated speaker-attributed transcription. "Rahul: We should use PostgreSQL for transaction safety."',
-      icon: <Video className="w-6 h-6 text-brand-DEFAULT" />,
-      color: 'from-brand-DEFAULT to-indigo-600',
+      num: '01',
+      title: 'WebRTC Conferencing & STT',
+      subtitle: 'Real-Time Voice Streaming',
+      desc: 'High-definition WebRTC video meetings with automatic speech recognition, attributed to individual speakers.',
+      code: `// WebRTC Audio Stream Captured\n[10:14:02] Rahul: "Let us use PostgreSQL with pgvector for relational integrity and fast vector embeddings."`,
+      tag: 'WEBRTC + SPEECH STT',
     },
     {
-      title: '2. AI Extraction',
+      num: '02',
+      title: 'Autonomous AI Extraction',
       subtitle: 'Decisions, Tasks & Commitments',
-      desc: 'LLM analyzes transcript to extract structured JSON data. Decision: Use PostgreSQL. Task: Priya prepares documentation by Monday.',
-      icon: <GitFork className="w-6 h-6 text-purple-400" />,
-      color: 'from-purple-500 to-violet-600',
+      desc: 'LLM agents continuously parse meeting transcripts into structured JSON schemas with zero manual note-taking.',
+      code: `{\n  "decision": "Use PostgreSQL + pgvector",\n  "rationale": "ACID compliance & vector search",\n  "action_items": [\n    { "assignee": "Priya", "task": "Design schema", "due": "Monday" }\n  ]\n}`,
+      tag: 'LLM AGENT JSON',
     },
     {
-      title: '3. AI Follow-Up Email',
-      subtitle: 'Automated Invitation & Summary',
-      desc: 'AI generates professional follow-up email sent to all participants with linked meeting context, tasks, and deadlines.',
-      icon: <Mail className="w-6 h-6 text-cyan-400" />,
-      color: 'from-cyan-500 to-blue-600',
+      num: '03',
+      title: 'Agentic Follow-Up Emails',
+      subtitle: 'Approval Queue & Distribution',
+      desc: 'Executive summaries and assigned action items are automatically composed into ready-to-approve email drafts.',
+      code: `TO: team@contextos.local\nSUBJECT: Architecture Decision: PostgreSQL Adopted\nSUMMARY: PostgreSQL selected. Priya assigned to deliver schema by Monday.\nSTATUS: PENDING_APPROVAL`,
+      tag: 'HUMAN-IN-THE-LOOP',
     },
     {
-      title: '4. Context Memory Graph',
-      subtitle: 'RAG Knowledge Assistant',
-      desc: 'Every meeting, task, decision, and email is stored in a pgvector knowledge graph for instant natural-language Q&A.',
-      icon: <Cpu className="w-6 h-6 text-emerald-400" />,
-      color: 'from-emerald-500 to-teal-600',
+      num: '04',
+      title: 'Vector Context Graph',
+      subtitle: 'pgvector RAG Organizational Memory',
+      desc: 'All historical meetings, transcripts, decisions, and emails are indexed for sub-150ms natural language search.',
+      code: `QUERY: "Why did we choose PostgreSQL over MongoDB?"\nANSWER: "Decided on Sept 20 by Rahul & Priya for transaction safety and ACID guarantees."`,
+      tag: 'PGVECTOR RAG',
     },
   ];
 
   return (
-    <div className="min-h-screen bg-background text-text-primary overflow-x-hidden selection:bg-brand-DEFAULT selection:text-white">
+    <div className="min-h-screen bg-background text-text-primary selection:bg-foreground selection:text-background font-sans antialiased overflow-x-hidden">
       {/* Top Navbar */}
-      <header className="fixed top-0 inset-x-0 z-40 bg-background/60 backdrop-blur-xl border-b border-border px-6 py-4 flex items-center justify-between">
+      <header className="fixed top-0 inset-x-0 z-40 bg-background/80 backdrop-blur-md border-b border-border px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand-DEFAULT via-brand-accent to-brand-cyan flex items-center justify-center text-white font-extrabold shadow-glow-indigo text-xl">
-            C
+          <div className="w-8 h-8 rounded-full border border-border bg-surface flex items-center justify-center text-text-primary shadow-minimal">
+            <Mark stroke={8} className="w-4 h-4" />
           </div>
-          <span className="text-xl font-extrabold tracking-tight text-gradient">ContextOS</span>
+          <span className="text-base font-extrabold tracking-tight">ContextOS.</span>
         </div>
+
+        <nav className="hidden md:flex items-center gap-8 text-xs font-mono uppercase tracking-widest text-text-secondary">
+          <span className="hover:text-text-primary cursor-pointer transition-colors" onClick={() => navigate('/meet/mock%20code/room')}>Conferencing</span>
+          <span className="hover:text-text-primary cursor-pointer transition-colors" onClick={() => navigate('/dashboard')}>Decision Log</span>
+          <span className="hover:text-text-primary cursor-pointer transition-colors" onClick={() => navigate('/email')}>Email Hub</span>
+          <span className="hover:text-text-primary cursor-pointer transition-colors" onClick={() => navigate('/dashboard')}>Memory Graph</span>
+        </nav>
+
         <div className="flex items-center gap-3">
-          <Button variant="ghost" onClick={() => navigate('/auth')}>
+          <button
+            onClick={() => navigate('/auth')}
+            className="px-4 py-1.5 rounded-full border border-border text-xs font-semibold uppercase tracking-wider hover:border-foreground/40 transition-colors"
+          >
             Sign In
-          </Button>
-          <Button variant="glow" onClick={() => navigate('/dashboard')} icon={<Sparkles className="w-4 h-4" />}>
-            Explore Demo
-          </Button>
+          </button>
+          <button
+            onClick={() => navigate('/dashboard')}
+            className="px-4 py-1.5 rounded-full bg-foreground text-background text-xs font-semibold uppercase tracking-wider hover:opacity-90 transition-opacity"
+          >
+            Open Workspace &rarr;
+          </button>
         </div>
       </header>
 
       {/* Hero Section */}
-      <section className="relative pt-36 pb-20 px-6 max-w-7xl mx-auto text-center">
-        {/* Animated ambient backdrop glow */}
-        <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[600px] h-[350px] bg-gradient-to-tr from-brand-DEFAULT/30 via-brand-accent/20 to-brand-cyan/20 blur-[120px] rounded-full pointer-events-none -z-10" />
+      <section className="relative pt-36 pb-20 px-6 max-w-6xl mx-auto">
+        <div className="space-y-6 max-w-3xl">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-border text-[11px] font-mono tracking-widest uppercase text-text-secondary bg-surface">
+            <span className="w-1.5 h-1.5 rounded-full bg-status-success animate-pulse" />
+            Autonomous Context Platform • Capstone 2026
+          </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="space-y-6 max-w-4xl mx-auto"
-        >
-          <Badge variant="cyan" size="md" icon={<Sparkles className="w-4 h-4 animate-spin" />}>
-            B.Tech CS Capstone Project • Powered by AI & pgvector
-          </Badge>
-
-          <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight leading-[1.15]">
-            The AI-Powered Unified Meeting, Email &{' '}
-            <span className="text-gradient">Organizational Context Layer</span>
+          <h1 className="text-5xl sm:text-7xl font-bold tracking-tight leading-[0.96]">
+            Every meeting.
+            <br />
+            <em className="font-normal italic text-text-secondary">Remembered.</em>
           </h1>
 
-          <p className="text-lg sm:text-xl text-text-secondary font-normal max-w-2xl mx-auto leading-relaxed">
-            Stop asking <em>"Where is that file?"</em> ContextOS automatically turns video meetings, emails, decisions, tasks, and commitments into a single searchable knowledge graph.
+          <p className="text-base sm:text-lg text-text-secondary max-w-2xl leading-relaxed pt-2">
+            ContextOS unifies WebRTC video rooms, speech transcription, automated decision extraction, email follow-ups, and vector knowledge memory into a single organizational operating system.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-            <Button
-              size="lg"
-              variant="glow"
+          <div className="flex flex-wrap items-center gap-4 pt-4">
+            <button
               onClick={() => navigate('/dashboard')}
-              icon={<ArrowRight className="w-5 h-5" />}
-              className="w-full sm:w-auto"
+              className="px-6 py-3 rounded-full bg-foreground text-background font-semibold text-xs tracking-wider uppercase flex items-center gap-3 hover:opacity-90 transition-opacity shadow-minimal"
             >
-              Launch Platform Demo
-            </Button>
-            <Button
-              size="lg"
-              variant="secondary"
-              onClick={() => navigate('/auth')}
-              icon={<Play className="w-4 h-4 text-brand-cyan" />}
-              className="w-full sm:w-auto"
+              <span>Explore Live Dashboard</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => navigate('/meet/mock%20code/room')}
+              className="px-6 py-3 rounded-full border border-border text-text-primary hover:border-foreground/40 font-semibold text-xs tracking-wider uppercase flex items-center gap-2 transition-colors"
             >
-              Sign Up as Admin
-            </Button>
+              <Video className="w-4 h-4 text-text-secondary" />
+              <span>Launch Video Room</span>
+            </button>
           </div>
-        </motion.div>
+        </div>
 
-        {/* Hero Interactive Product Mockup */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="mt-16 glass-panel rounded-3xl p-4 sm:p-6 border border-border shadow-2xl relative overflow-hidden"
-        >
-          <div className="flex items-center justify-between pb-4 border-b border-border/60">
+        {/* Stats Row Matching Auth Page */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 pt-16 mt-16 border-t border-border">
+          <div>
+            <b className="block text-3xl sm:text-4xl font-bold tracking-tight">8+</b>
+            <span className="text-xs font-mono tracking-widest uppercase text-text-muted">Conferencing Integrations</span>
+          </div>
+          <div>
+            <b className="block text-3xl sm:text-4xl font-bold tracking-tight">100%</b>
+            <span className="text-xs font-mono tracking-widest uppercase text-text-muted">Searchable Decisions</span>
+          </div>
+          <div>
+            <b className="block text-3xl sm:text-4xl font-bold tracking-tight">0</b>
+            <span className="text-xs font-mono tracking-widest uppercase text-text-muted">Manual Notes to Take</span>
+          </div>
+          <div>
+            <b className="block text-3xl sm:text-4xl font-bold tracking-tight">&lt;150ms</b>
+            <span className="text-xs font-mono tracking-widest uppercase text-text-muted">pgvector Query Latency</span>
+          </div>
+        </div>
+
+        {/* Live Architecture Wireframe Panel */}
+        <div className="mt-16 bg-surface border border-border rounded-2xl overflow-hidden shadow-2xl">
+          <div className="px-5 py-3 border-b border-border flex items-center justify-between text-xs font-mono text-text-muted">
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-rose-500" />
-              <div className="w-3 h-3 rounded-full bg-amber-500" />
-              <div className="w-3 h-3 rounded-full bg-emerald-500" />
-              <span className="text-xs font-mono text-text-muted ml-2">https://contextos.app/dashboard</span>
+              <span className="w-2.5 h-2.5 rounded-full border border-border bg-surface-hover" />
+              <span className="w-2.5 h-2.5 rounded-full border border-border bg-surface-hover" />
+              <span className="w-2.5 h-2.5 rounded-full border border-border bg-surface-hover" />
+              <span className="ml-2">contextos://pipeline/live-stream</span>
             </div>
-            <Badge variant="purple" size="sm">Live Capstone Architecture Preview</Badge>
+            <span className="text-status-success font-medium flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-status-success animate-ping" />
+              READY
+            </span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-6 text-left">
-            <div className="p-4 rounded-2xl bg-surface/60 border border-border space-y-3">
-              <div className="flex items-center gap-2 text-brand-DEFAULT font-bold text-sm">
-                <Video className="w-4 h-4" /> Meeting Transcripts
-              </div>
-              <p className="text-xs text-text-secondary leading-relaxed">
-                "Rahul: Let's choose PostgreSQL over MongoDB due to relational consistency requirements for our capstone data layer."
+          <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border">
+            {/* Tile 1 */}
+            <div className="p-6 space-y-3">
+              <div className="text-xs font-mono uppercase tracking-widest text-text-muted">01 / CAPTURE</div>
+              <h3 className="font-semibold text-sm text-text-primary">Speech to Text Stream</h3>
+              <p className="text-xs text-text-secondary leading-relaxed font-mono bg-surface-hover/60 p-3 rounded-lg border border-border">
+                "We need PostgreSQL with pgvector for relational integrity and vector retrieval."
               </p>
-              <Badge variant="cyan" size="sm">Speech STT Captured</Badge>
             </div>
 
-            <div className="p-4 rounded-2xl bg-surface/60 border border-border space-y-3">
-              <div className="flex items-center gap-2 text-purple-400 font-bold text-sm">
-                <GitFork className="w-4 h-4" /> AI Extracted Decision
+            {/* Tile 2 */}
+            <div className="p-6 space-y-3">
+              <div className="text-xs font-mono uppercase tracking-widest text-text-muted">02 / STRUCTURE</div>
+              <h3 className="font-semibold text-sm text-text-primary">Autonomous Decision Extraction</h3>
+              <div className="text-xs text-text-secondary font-mono bg-surface-hover/60 p-3 rounded-lg border border-border space-y-1">
+                <div><span className="text-text-muted">DECISION:</span> PostgreSQL Adopted</div>
+                <div><span className="text-text-muted">TASK:</span> Priya - Schema DDL</div>
+                <div><span className="text-text-muted">STATUS:</span> Recorded in DB</div>
               </div>
-              <p className="text-xs text-text-secondary leading-relaxed">
-                <strong>Decision:</strong> Use PostgreSQL DB<br />
-                <strong>Reason:</strong> Relational transaction safety<br />
-                <strong>Assigned Task:</strong> Priya creates schema
-              </p>
-              <Badge variant="purple" size="sm">JSON Schema Validated</Badge>
             </div>
 
-            <div className="p-4 rounded-2xl bg-surface/60 border border-border space-y-3">
-              <div className="flex items-center gap-2 text-emerald-400 font-bold text-sm">
-                <Cpu className="w-4 h-4" /> Context Graph & RAG
+            {/* Tile 3 */}
+            <div className="p-6 space-y-3">
+              <div className="text-xs font-mono uppercase tracking-widest text-text-muted">03 / MEMORY</div>
+              <h3 className="font-semibold text-sm text-text-primary">Semantic Vector Retrieval</h3>
+              <div className="text-xs text-text-secondary font-mono bg-surface-hover/60 p-3 rounded-lg border border-border space-y-1">
+                <div><span className="text-text-muted">Q:</span> Why PostgreSQL?</div>
+                <div><span className="text-text-muted">A:</span> Rahul & Priya decided for ACID transaction safety on Sept 20.</div>
               </div>
-              <p className="text-xs text-text-secondary leading-relaxed">
-                <em>Prompt:</em> "Why did we choose PostgreSQL?"<br />
-                <em>AI Answer:</em> "Chosen in Architecture Meeting on Sept 20 by Rahul & Priya for transaction safety."
-              </p>
-              <Badge variant="success" size="sm">Vector Search Verified</Badge>
             </div>
           </div>
-        </motion.div>
+        </div>
       </section>
 
-      {/* Interactive Workflow Flow Step-Through */}
-      <section className="py-20 px-6 max-w-7xl mx-auto">
-        <div className="text-center max-w-3xl mx-auto space-y-4 mb-14">
-          <h2 className="text-3xl font-extrabold text-gradient">The ContextOS End-to-End Workflow</h2>
-          <p className="text-text-secondary">
-            From scheduling and WebRTC video calls to AI extraction, email follow-ups, and natural-language organizational memory search.
-          </p>
+      {/* Interactive Workflow Step-Through */}
+      <section className="py-20 px-6 max-w-6xl mx-auto border-t border-border">
+        <div className="max-w-2xl mb-12">
+          <div className="text-xs font-mono uppercase tracking-widest text-text-muted mb-2">END-TO-END SYSTEM</div>
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">The 4-stage pipeline.</h2>
         </div>
 
         {/* Step Selector Buttons */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
           {workflowSteps.map((step, idx) => (
             <button
               key={idx}
               onClick={() => setActiveStep(idx)}
-              className={`p-4 rounded-2xl border text-left transition-all ${
+              className={`p-4 rounded-xl border text-left transition-all ${
                 activeStep === idx
-                  ? 'bg-brand-DEFAULT/15 border-brand-DEFAULT text-text-primary shadow-glow-indigo'
-                  : 'bg-surface/50 border-border text-text-secondary hover:bg-surface-hover'
+                  ? 'border-foreground bg-surface-hover shadow-minimal'
+                  : 'border-border bg-surface hover:border-foreground/30'
               }`}
             >
-              <div className="flex items-center gap-2 mb-2">
-                {step.icon}
-                <span className="text-xs font-mono font-bold text-text-muted">STEP 0{idx + 1}</span>
-              </div>
-              <h3 className="font-bold text-sm truncate">{step.title}</h3>
+              <div className="text-xs font-mono text-text-muted mb-1">{step.num}</div>
+              <div className="font-semibold text-sm text-text-primary">{step.title}</div>
             </button>
           ))}
         </div>
 
         {/* Active Step Showcase */}
-        <GlassCard className="p-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-            <div className="space-y-4">
-              <Badge variant="cyan" size="md">
-                Phase {activeStep + 1} Pipeline
-              </Badge>
-              <h3 className="text-2xl font-bold text-text-primary">{workflowSteps[activeStep].title}</h3>
-              <p className="text-lg font-semibold text-brand-DEFAULT">{workflowSteps[activeStep].subtitle}</p>
-              <p className="text-text-secondary leading-relaxed">{workflowSteps[activeStep].desc}</p>
-              <div className="pt-2 flex items-center gap-3">
-                <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-                <span className="text-sm font-medium">Automatic context linking across emails & tasks</span>
-              </div>
-            </div>
-            <div className="p-6 rounded-2xl bg-surface/80 border border-border font-mono text-xs text-text-secondary space-y-3">
-              <div className="flex items-center justify-between text-text-muted border-b border-border pb-2">
-                <span>context_os_pipeline.json</span>
-                <span className="text-emerald-400">STATUS_200_OK</span>
-              </div>
-              <pre className="text-brand-cyan overflow-x-auto">
-{`{
-  "step": ${activeStep + 1},
-  "subsystem": "${workflowSteps[activeStep].title}",
-  "status": "PROCESSED",
-  "contextNodesCreated": 14,
-  "pgvectorEmbedded": true
-}`}
-              </pre>
+        <div className="bg-surface border border-border rounded-2xl p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+          <div className="space-y-4">
+            <span className="px-2.5 py-0.5 rounded-full border border-border text-[10px] font-mono uppercase tracking-widest text-text-secondary">
+              {workflowSteps[activeStep].tag}
+            </span>
+            <h3 className="text-2xl font-bold tracking-tight">{workflowSteps[activeStep].title}</h3>
+            <p className="text-sm text-text-secondary leading-relaxed">{workflowSteps[activeStep].desc}</p>
+            <div className="pt-2">
+              <button
+                onClick={() => navigate(activeStep === 0 ? '/meet/mock%20code/room' : activeStep === 2 ? '/email' : '/dashboard')}
+                className="px-4 py-2 rounded-full border border-border hover:border-foreground/40 text-xs font-semibold uppercase tracking-wider flex items-center gap-2 transition-colors"
+              >
+                <span>Launch {workflowSteps[activeStep].title.split(' ')[0]}</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
             </div>
           </div>
-        </GlassCard>
-      </section>
 
-      {/* Bento Grid Features */}
-      <section className="py-20 px-6 max-w-7xl mx-auto">
-        <div className="text-center max-w-2xl mx-auto mb-14 space-y-3">
-          <h2 className="text-3xl font-extrabold text-text-primary">Built for Modern Engineering Organizations</h2>
-          <p className="text-text-secondary">Comprehensive feature suite powering seamless remote collaboration.</p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <GlassCard className="md:col-span-2 space-y-4">
-            <div className="p-3 rounded-xl bg-brand-DEFAULT/10 border border-brand-DEFAULT/20 w-fit text-brand-DEFAULT">
-              <Video className="w-6 h-6" />
-            </div>
-            <h3 className="text-xl font-bold text-text-primary">WebRTC Video Conferencing & Live Transcription</h3>
-            <p className="text-text-secondary text-sm leading-relaxed">
-              Browser-native peer-to-peer WebRTC video rooms with live Web Speech API transcription, mute controls, screen sharing, active speaker highlights, and in-meeting STOMP WebSocket chat.
-            </p>
-          </GlassCard>
-
-          <GlassCard className="space-y-4">
-            <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 w-fit text-purple-400">
-              <GitFork className="w-6 h-6" />
-            </div>
-            <h3 className="text-xl font-bold text-text-primary">AI Decision & Task Extraction</h3>
-            <p className="text-text-secondary text-sm leading-relaxed">
-              LLM JSON parsing automatically resolves relative dates and populates Kanban boards and commitment registries.
-            </p>
-          </GlassCard>
-
-          <GlassCard className="space-y-4">
-            <div className="p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/20 w-fit text-cyan-400">
-              <Mail className="w-6 h-6" />
-            </div>
-            <h3 className="text-xl font-bold text-text-primary">Context-Linked Email Hub</h3>
-            <p className="text-text-secondary text-sm leading-relaxed">
-              3-pane email client with clickable meeting & task context chips, delivery status tracking, and AI email writer.
-            </p>
-          </GlassCard>
-
-          <GlassCard className="md:col-span-2 space-y-4">
-            <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 w-fit text-emerald-400">
-              <Cpu className="w-6 h-6" />
-            </div>
-            <h3 className="text-xl font-bold text-text-primary">Interactive Organizational Knowledge Graph & Vector RAG</h3>
-            <p className="text-text-secondary text-sm leading-relaxed">
-              Visual React Flow knowledge graph connecting Meetings, People, Decisions, Tasks, and Emails. Natural language Q&A backed by pgvector dense embeddings with source citations.
-            </p>
-          </GlassCard>
+          <div className="bg-surface-hover border border-border rounded-xl p-4 font-mono text-xs text-text-secondary overflow-x-auto leading-relaxed">
+            <pre className="whitespace-pre-wrap">{workflowSteps[activeStep].code}</pre>
+          </div>
         </div>
       </section>
 
-      {/* CTA Footer */}
-      <footer className="border-t border-border bg-surface/30 py-12 px-6 text-center text-text-muted text-sm space-y-4">
-        <div className="flex items-center justify-center gap-2">
-          <div className="w-7 h-7 rounded-xl bg-brand-DEFAULT flex items-center justify-center text-white font-bold text-sm">
-            C
-          </div>
-          <span className="font-bold text-text-primary">ContextOS</span>
+      {/* Minimal Footer */}
+      <footer className="border-t border-border py-12 px-6 max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-4 text-xs font-mono text-text-muted">
+        <div className="flex items-center gap-2">
+          <Mark stroke={8} className="w-3.5 h-3.5 text-text-primary" />
+          <span className="font-bold text-text-primary tracking-tight">ContextOS.</span>
+          <span>&copy; 2026 B.Tech CS Capstone Project</span>
         </div>
-        <p>B.Tech CS Capstone Project • Java 21 Spring Boot 3 & React TypeScript Architecture</p>
-        <p className="text-xs text-text-muted">© 2026 ContextOS. All rights reserved.</p>
+        <div className="flex items-center gap-6">
+          <span className="inline-flex items-center gap-1.5 text-status-success">
+            <span className="w-1.5 h-1.5 rounded-full bg-status-success" />
+            All systems normal
+          </span>
+          <span className="cursor-pointer hover:text-text-primary transition-colors" onClick={() => navigate('/auth')}>Sign In</span>
+          <span className="cursor-pointer hover:text-text-primary transition-colors" onClick={() => navigate('/dashboard')}>Workspace</span>
+        </div>
       </footer>
     </div>
   );
 };
+
+export default LandingPage;

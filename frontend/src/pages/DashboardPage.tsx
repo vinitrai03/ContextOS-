@@ -2,7 +2,7 @@ import React from 'react';
 import { GlassCard } from '../components/ui/GlassCard';
 import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/button';
-import { Video, Mail, CheckSquare, GitFork, Sparkles, Calendar, ArrowUpRight } from 'lucide-react';
+import { Video, Mail, CheckSquare, GitFork, Sparkles, Calendar, ArrowUpRight, Plus, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useDashboardSummary } from '../hooks/useDashboard';
 
@@ -13,7 +13,7 @@ export const DashboardPage: React.FC = () => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full min-h-[50vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-DEFAULT"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-2 border-foreground border-t-transparent"></div>
       </div>
     );
   }
@@ -21,8 +21,13 @@ export const DashboardPage: React.FC = () => {
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center h-full min-h-[50vh] space-y-4">
-        <div className="text-rose-500">Failed to load dashboard data. Please make sure backend is running.</div>
-        <Button onClick={() => window.location.reload()} variant="outline">Retry</Button>
+        <div className="text-status-error text-sm font-mono">Failed to load dashboard data. Please make sure backend is running.</div>
+        <button
+          onClick={() => window.location.reload()}
+          className="px-4 py-2 rounded-full border border-border text-xs font-semibold uppercase tracking-wider hover:border-foreground/40 transition-colors"
+        >
+          Retry
+        </button>
       </div>
     );
   }
@@ -35,116 +40,130 @@ export const DashboardPage: React.FC = () => {
   } = data || {};
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 max-w-7xl mx-auto">
       {/* Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border pb-6">
         <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-extrabold text-text-primary">Executive Context Dashboard</h1>
-            <Badge variant="cyan" size="sm">Phase 4 Online</Badge>
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl font-bold tracking-tight text-text-primary">Executive Context Dashboard</h1>
+            <span className="text-[10px] font-mono uppercase tracking-widest px-2.5 py-0.5 rounded-full border border-border bg-surface-hover text-text-muted">
+              Live Pipeline
+            </span>
           </div>
-          <p className="text-sm text-text-secondary">Unified meeting schedule, AI decision log, tasks, and organizational memory.</p>
+          <p className="text-xs text-text-secondary mt-1 font-mono">Unified meeting schedule, AI decision log, tasks, and organizational memory graph.</p>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="outline" onClick={() => navigate('/calendar')}>
-            View Calendar
-          </Button>
-          <Button variant="glow" onClick={() => navigate('/meetings/new')} icon={<Video className="w-4 h-4" />}>
-            Schedule Meeting
-          </Button>
+          <button
+            onClick={() => navigate('/calendar')}
+            className="px-4 py-2 rounded-full border border-border text-xs font-semibold uppercase tracking-wider hover:border-foreground/40 transition-colors"
+          >
+            Calendar
+          </button>
+          <button
+            onClick={() => navigate('/meetings/new')}
+            className="px-4 py-2 rounded-full bg-foreground text-background text-xs font-semibold uppercase tracking-wider hover:opacity-90 transition-opacity flex items-center gap-1.5 shadow-minimal"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>Schedule Meeting</span>
+          </button>
         </div>
       </div>
 
-      {/* Live Meetings Card (Mocked for now) */}
-      <div className="bg-red-500/10 border border-red-500/30 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-4 shadow-[0_0_30px_rgba(239,68,68,0.15)] relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-1 h-full bg-red-500"></div>
-          <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center relative">
-                  <div className="absolute inset-0 rounded-full border-2 border-red-500 animate-ping opacity-20"></div>
-                  <Video className="w-6 h-6 text-red-500" />
-              </div>
-              <div>
-                  <h3 className="text-lg font-bold text-text-primary flex items-center gap-2">
-                      Q3 Architecture Review <Badge variant="cyan" size="sm">mock-code</Badge>
-                  </h3>
-                  <p className="text-red-400 font-medium text-sm">Live now • 3 participants</p>
-              </div>
+      {/* Live Meetings Callout Card */}
+      <div className="bg-surface border border-border rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-4 shadow-minimal relative overflow-hidden">
+        <div className="flex items-center gap-4">
+          <div className="w-10 h-10 rounded-full border border-border bg-surface-hover flex items-center justify-center relative">
+            <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
           </div>
-          <Button onClick={() => navigate('/meet/mock-code')} className="bg-red-500 hover:bg-red-600 border-none shadow-[0_0_15px_rgba(239,68,68,0.5)]">
-              Join Meeting
-          </Button>
+          <div>
+            <div className="flex items-center gap-2">
+              <h3 className="text-base font-semibold text-text-primary">Q3 Architecture Review</h3>
+              <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full border border-border bg-surface-hover text-text-muted">
+                mock-code
+              </span>
+            </div>
+            <p className="text-xs text-text-muted font-mono mt-0.5 flex items-center gap-2">
+              <span className="text-status-success font-medium">● ACTIVE NOW</span>
+              <span>• 3 participants connected</span>
+            </p>
+          </div>
+        </div>
+        <button
+          onClick={() => navigate('/meet/mock%20code/room')}
+          className="px-5 py-2 rounded-full bg-foreground text-background text-xs font-semibold uppercase tracking-wider hover:opacity-90 transition-opacity flex items-center gap-2 shadow-minimal"
+        >
+          <span>Join Meeting Room</span>
+          <ArrowRight className="w-3.5 h-3.5" />
+        </button>
       </div>
 
-      {/* Bento Stat Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <GlassCard className="space-y-3">
+      {/* Minimal Stat Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <GlassCard className="space-y-2 p-5">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-text-muted uppercase tracking-wider">Upcoming Meetings</span>
-            <div className="p-2 rounded-xl bg-brand-DEFAULT/10 text-brand-DEFAULT">
-              <Video className="w-4 h-4" />
-            </div>
+            <span className="text-[11px] font-mono uppercase tracking-widest text-text-muted">Upcoming</span>
+            <Video className="w-4 h-4 text-text-muted" />
           </div>
-          <div className="text-3xl font-extrabold text-text-primary">{upcomingMeetings}</div>
-          <p className="text-xs text-emerald-400 flex items-center gap-1 font-medium">
-            <ArrowUpRight className="w-3.5 h-3.5" /> {todayMeetings} scheduled for today
+          <div className="text-3xl font-bold tracking-tight text-text-primary">{upcomingMeetings}</div>
+          <p className="text-xs text-text-secondary font-mono flex items-center gap-1">
+            <ArrowUpRight className="w-3 h-3 text-status-success" /> {todayMeetings} scheduled today
           </p>
         </GlassCard>
 
-        <GlassCard className="space-y-3">
+        <GlassCard className="space-y-2 p-5">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-text-muted uppercase tracking-wider">Completed Meetings</span>
-            <div className="p-2 rounded-xl bg-purple-500/10 text-purple-400">
-              <Calendar className="w-4 h-4" />
-            </div>
+            <span className="text-[11px] font-mono uppercase tracking-widest text-text-muted">Completed</span>
+            <Calendar className="w-4 h-4 text-text-muted" />
           </div>
-          <div className="text-3xl font-extrabold text-text-primary">{completedMeetings}</div>
-          <p className="text-xs text-text-muted font-medium">Total meetings finished</p>
+          <div className="text-3xl font-bold tracking-tight text-text-primary">{completedMeetings}</div>
+          <p className="text-xs text-text-muted font-mono">Total archived</p>
         </GlassCard>
 
-        <GlassCard className="space-y-3 cursor-pointer hover:border-cyan-500/50 transition-all" onClick={() => navigate('/tasks')}>
+        <GlassCard className="space-y-2 p-5 cursor-pointer hover:border-foreground/30 transition-all" onClick={() => navigate('/tasks')}>
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-text-muted uppercase tracking-wider">Active Tasks</span>
-            <div className="p-2 rounded-xl bg-cyan-500/10 text-cyan-400">
-              <CheckSquare className="w-4 h-4" />
-            </div>
+            <span className="text-[11px] font-mono uppercase tracking-widest text-text-muted">Active Tasks</span>
+            <CheckSquare className="w-4 h-4 text-text-muted" />
           </div>
-          <div className="text-3xl font-extrabold text-text-primary">3</div>
-          <p className="text-xs text-cyan-400 font-medium">1 overdue</p>
+          <div className="text-3xl font-bold tracking-tight text-text-primary">3</div>
+          <p className="text-xs text-text-secondary font-mono">1 pending review</p>
         </GlassCard>
 
-        <GlassCard className="space-y-3 cursor-pointer hover:border-brand-DEFAULT/50 transition-all" onClick={() => navigate('/decisions')}>
+        <GlassCard className="space-y-2 p-5 cursor-pointer hover:border-foreground/30 transition-all" onClick={() => navigate('/decisions')}>
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-text-muted uppercase tracking-wider">Decisions Logged</span>
-            <div className="p-2 rounded-xl bg-brand-DEFAULT/10 text-brand-DEFAULT">
-              <GitFork className="w-4 h-4" />
-            </div>
+            <span className="text-[11px] font-mono uppercase tracking-widest text-text-muted">Decisions</span>
+            <GitFork className="w-4 h-4 text-text-muted" />
           </div>
-          <div className="text-3xl font-extrabold text-text-primary">12</div>
-          <p className="text-xs text-brand-light font-medium">+2 this week</p>
+          <div className="text-3xl font-bold tracking-tight text-text-primary">12</div>
+          <p className="text-xs text-text-secondary font-mono">+2 recorded this week</p>
         </GlassCard>
       </div>
 
       {/* Activity Overview */}
       <GlassCard className="p-6 space-y-4">
-        <h3 className="font-bold text-lg text-text-primary">Recent Activity Feed</h3>
-        <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h3 className="font-semibold text-sm uppercase tracking-wider text-text-primary font-mono">Recent Activity Stream</h3>
+          <span className="text-[10px] font-mono uppercase tracking-widest text-text-muted">Automated Audit Log</span>
+        </div>
+        <div className="space-y-2">
           {recentActivity.length === 0 ? (
-            <div className="p-4 text-center text-text-muted text-sm border border-dashed border-border rounded-xl">
+            <div className="p-6 text-center text-text-muted text-xs font-mono border border-dashed border-border rounded-xl">
               No recent activity recorded
             </div>
           ) : (
             recentActivity.map((activity: any) => (
-              <div key={activity.id} className="p-3.5 rounded-xl bg-surface/50 border border-border flex items-center justify-between">
+              <div key={activity.id} className="p-3 rounded-xl bg-surface-hover/40 border border-border flex items-center justify-between hover:bg-surface-hover transition-colors">
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-brand-DEFAULT/15 text-brand-DEFAULT flex items-center justify-center font-bold">
-                    A
+                  <div className="w-7 h-7 rounded-full border border-border bg-surface flex items-center justify-center font-mono text-xs text-text-muted">
+                    &bull;
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-text-primary">Action: {activity.action}</p>
-                    <p className="text-xs text-text-muted">Entity: {activity.entityType || 'SYSTEM'}</p>
+                    <p className="text-xs font-medium text-text-primary">{activity.action}</p>
+                    <p className="text-[10px] text-text-muted font-mono">Entity: {activity.entityType || 'SYSTEM'}</p>
                   </div>
                 </div>
-                <Badge variant="purple" size="sm">{new Date(activity.createdAt).toLocaleDateString()}</Badge>
+                <span className="text-[10px] font-mono text-text-muted px-2 py-0.5 rounded border border-border bg-surface">
+                  {new Date(activity.createdAt).toLocaleDateString()}
+                </span>
               </div>
             ))
           )}
@@ -153,3 +172,5 @@ export const DashboardPage: React.FC = () => {
     </div>
   );
 };
+
+export default DashboardPage;

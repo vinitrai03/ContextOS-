@@ -16,9 +16,10 @@ export default {
         },
         border: 'var(--border-color)',
         brand: {
-          DEFAULT: '#6366f1', // Indigo
-          accent: '#8b5cf6',  // Violet
-          cyan: '#06b6d4',    // Cyan
+          DEFAULT: '#fafafa', // Minimal high-contrast monochrome
+          accent: '#737373',
+          dark: '#0a0a0a',
+          cyan: '#fafafa',
         },
         text: {
           primary: 'var(--text-primary)',
@@ -26,24 +27,23 @@ export default {
           muted: 'var(--text-muted)',
         },
         status: {
-          success: '#10b981',
+          success: '#2fbf71',
           warning: '#f59e0b',
           error: '#ef4444',
-          info: '#3b82f6',
+          info: '#8a8a8a',
         }
       },
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
+        sans: ['"Inter Tight"', 'Inter', 'sans-serif'],
         mono: ['"JetBrains Mono"', 'monospace'],
       },
       boxShadow: {
-        'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
-        'glow-indigo': '0 0 25px -5px rgba(99, 102, 241, 0.4)',
-        'glow-cyan': '0 0 25px -5px rgba(6, 182, 212, 0.4)',
+        'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.45)',
+        'minimal': '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'gradient-mesh': 'radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.15) 0%, rgba(6, 182, 212, 0.05) 50%, transparent 100%)',
+        'gradient-mesh': 'radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.03) 0%, transparent 70%)',
       },
       animation: {
         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
